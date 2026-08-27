@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Stabi Survive v0.1</title>
+<style>
+:root{--bg:#061817;--panel:#0b2926cc;--line:#4cbfb0;--mint:#8fffee;--gold:#ffd75f;--danger:#ff6f83;--text:#eafffb}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+#game{position:fixed;inset:0;width:100vw;height:100vh;display:block;touch-action:none;background:#09211f}
+.hud{position:fixed;inset:12px 12px auto 12px;display:flex;gap:8px;align-items:flex-start;justify-content:space-between;pointer-events:none}
+.panel{background:var(--panel);border:1px solid #4cbfb066;box-shadow:0 10px 35px #0008;backdrop-filter:blur(8px);border-radius:12px;padding:9px 11px}
+.brand{font-size:13px;letter-spacing:.12em}.brand b{font-size:16px;color:var(--mint)}
+.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{min-width:76px;text-align:center;font-size:11px}.stat strong{display:block;font-size:15px;color:var(--mint);margin-top:2px}
+#quest{position:fixed;top:78px;left:50%;transform:translateX(-50%);max-width:min(520px,88vw);font-size:11px;text-align:center;pointer-events:none}
+#quest b{color:var(--gold)}
+#message{position:fixed;left:50%;top:48%;transform:translate(-50%,-50%);font-weight:800;letter-spacing:.08em;text-align:center;text-shadow:0 2px 14px #000;pointer-events:none;opacity:0;transition:.2s;font-size:clamp(18px,5vw,34px)}
+#message.show{opacity:1}
+#stick{position:fixed;left:22px;bottom:24px;width:124px;height:124px;border-radius:50%;border:2px solid #8fffee55;background:#071d1bbb;touch-action:none}
+#knob{position:absolute;left:39px;top:39px;width:44px;height:44px;border-radius:50%;background:#8fffeedb;box-shadow:0 0 20px #8fffee55}
+.actions{position:fixed;right:18px;bottom:22px;display:grid;grid-template-columns:68px 68px;gap:10px}
+.btn{height:68px;border-radius:16px;border:1px solid #8fffee77;background:#0d3330dd;color:white;font:700 11px ui-monospace;box-shadow:0 8px 24px #0007;touch-action:none}.btn:active{transform:scale(.96);background:#19534d}.attack{height:82px;grid-column:2;background:#19443ddd;border-color:#ffd75f88}.attack strong{font-size:24px;display:block;color:var(--gold)}
+#start{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#12453e 0,#061817 55%,#03100f 100%);z-index:5}
+.card{width:min(620px,90vw);padding:30px;border:1px solid #75d9cc77;border-radius:22px;background:#081f1ddd;box-shadow:0 30px 80px #000b;text-align:center}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.2em}.title{font-size:clamp(34px,9vw,70px);line-height:.92;margin:12px 0;color:var(--mint)}.sub{color:#b8d9d4;line-height:1.6;font-size:13px}.startbtn{margin-top:22px;padding:14px 28px;border-radius:12px;border:1px solid #8fffee;background:#78e4d4;color:#06201d;font:bold 14px ui-monospace}.tiny{font-size:10px;opacity:.6;margin-top:13px}
+@media(min-width:850px){#stick{width:140px;height:140px}#knob{left:44px;top:44px;width:48px;height:48px}.actions{right:28px;bottom:28px}.btn{width:76px;height:76px}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div class="hud">
+ <div class="panel brand"><b>STABI SURVIVE</b><br>PROTOTYPE v0.1</div>
+ <div class="stats">
+  <div class="panel stat">HP<strong id="hp">100</strong></div>
+  <div class="panel stat">USDZ<strong id="coins">0</strong></div>
+  <div class="panel stat">TIME<strong id="time">00:00</strong></div>
+  <div class="panel stat">WAVE<strong id="wave">1</strong></div>
+ </div>
+</div>
+<div id="quest" class="panel">OBJECTIVE • <b>SURVIVE</b> and clear instability around the Stabilizer field.</div>
+<div id="message"></div>
+<div id="stick"><div id="knob"></div></div>
+<div class="actions">
+ <button class="btn" id="dash">DASH<br>⚡</button>
+ <button class="btn attack" id="attack"><strong>✦</strong>STABILIZE</button>
+</div>
+<div id="start">
+ <div class="card">
+  <div class="eyebrow">COMMUNITY-MADE • UNOFFICIAL</div>
+  <div class="title">STABI<br>SURVIVE</div>
+  <div class="sub">A top-down action prototype inspired by the Stabilizer ecosystem.<br>Move freely, survive waves of Slippage, MEV and Price Impact, collect USDZ, and stabilize the field.</div>
+  <button class="startbtn" id="startBtn">ENTER THE FIELD ▶</button>
+  <div class="tiny">No wallet required • Mobile controls included</div>
+ </div>
+</div>
+<script>
+(()=>{
+const c=document.getElementById('game'),x=c.getContext('2d');let W=0,H=0,dpr=1;
+function resize(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+const world={w:2600,h:2000};
+const P={x:world.w/2,y:world.h/2,r:28,hp:100,max:100,speed:235,inv:0,dash:0,atk:0,dirX:1,dirY:0};
+let enemies=[],drops=[],particles=[],running=false,last=0,t=0,wave=1,coins=0,kills=0,spawnT=0,shake=0;
+const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if(e.code==='Space')attack()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
+const hero=new Image();hero.src='https://raw.githubusercontent.com/Youngliee/Stabi-v1-final/main/landing-hero.webp';
+const colors={slippage:'#ff7287',mev:'#b67cff',impact:'#ffb36b',bot:'#62d7ff'};
+function msg(s,ms=850){const el=document.getElementById('message');el.textContent=s;el.classList.add('show');clearTimeout(msg.to);msg.to=setTimeout(()=>el.classList.remove('show'),ms)}
+function spawnEnemy(type){const a=Math.random()*Math.PI*2,dist=Math.max(W,H)*.75+250;let ex=P.x+Math.cos(a)*dist,ey=P.y+Math.sin(a)*dist;ex=Math.max(50,Math.min(world.w-50,ex));ey=Math.max(50,Math.min(world.h-50,ey));const base={slippage:[34,72,48],mev:[28,88,62],impact:[40,58,70],bot:[48,115,82]}[type];enemies.push({type,x:ex,y:ey,r:base[0],hp:base[1]+wave*5,max:base[1]+wave*5,speed:base[2]+wave*2,hit:0})}
+function burst(px,py,col,n=10){for(let i=0;i<n;i++){let a=Math.random()*6.28,s=40+Math.random()*130;particles.push({x:px,y:py,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.45+Math.random()*.4,col})}}
+function attack(){if(!running||P.atk>0)return;P.atk=.34;const reach=118;let hit=0;for(const e of enemies){const dx=e.x-P.x,dy=e.y-P.y,d=Math.hypot(dx,dy);if(d<reach+e.r){e.hp-=40;e.hit=.12;hit++;burst(e.x,e.y,'#8fffee',7)}}if(hit)msg('STABILITY PULSE ×'+hit,420)}
+function dash(){if(!running||P.dash>0)return;P.dash=.34;msg('STABILITY DASH',360)}document.getElementById('attack').onpointerdown=e=>{e.preventDefault();attack()};document.getElementById('dash').onpointerdown=e=>{e.preventDefault();dash()};
+let joy={x:0,y:0,id:null};const stick=document.getElementById('stick'),knob=document.getElementById('knob');function joyMove(e){const r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,p=e.touches?e.touches[0]:e,dx=p.clientX-cx,dy=p.clientY-cy,m=Math.min(r.width*.34,Math.hypot(dx,dy)),a=Math.atan2(dy,dx);joy.x=Math.cos(a)*(m/(r.width*.34));joy.y=Math.sin(a)*(m/(r.width*.34));knob.style.transform=`translate(${joy.x*36}px,${joy.y*36}px)`}
+stick.addEventListener('pointerdown',e=>{stick.setPointerCapture(e.pointerId);joy.id=e.pointerId;joyMove(e)});stick.addEventListener('pointermove',e=>{if(joy.id===e.pointerId)joyMove(e)});function joyEnd(){joy={x:0,y:0,id:null};knob.style.transform='translate(0,0)'}stick.addEventListener('pointerup',joyEnd);stick.addEventListener('pointercancel',joyEnd);
+function update(dt){t+=dt;P.inv=Math.max(0,P.inv-dt);P.atk=Math.max(0,P.atk-dt);P.dash=Math.max(0,P.dash-dt);let mx=joy.x+(keys.a||keys.arrowleft?-1:0)+(keys.d||keys.arrowright?1:0),my=joy.y+(keys.w||keys.arrowup?-1:0)+(keys.s||keys.arrowdown?1:0);let m=Math.hypot(mx,my);if(m>0){mx/=Math.max(1,m);my/=Math.max(1,m);P.dirX=mx;P.dirY=my;const sp=P.speed*(P.dash>0?2.45:1);P.x+=mx*sp*dt;P.y+=my*sp*dt}P.x=Math.max(45,Math.min(world.w-45,P.x));P.y=Math.max(45,Math.min(world.h-45,P.y));
+wave=1+Math.floor(t/24);spawnT-=dt;if(spawnT<=0){const count=1+Math.floor(wave/3);for(let i=0;i<count;i++){const pool=wave<2?['slippage']:wave<4?['slippage','mev','impact']:['slippage','mev','impact','bot'];spawnEnemy(pool[Math.floor(Math.random()*pool.length)])}spawnT=Math.max(.45,1.55-wave*.07)}
+for(let i=enemies.length-1;i>=0;i--){const e=enemies[i],dx=P.x-e.x,dy=P.y-e.y,d=Math.max(.001,Math.hypot(dx,dy));e.x+=dx/d*e.speed*dt;e.y+=dy/d*e.speed*dt;e.hit=Math.max(0,e.hit-dt);if(e.hp<=0){kills++;coins+=1+(e.type==='bot'?3:0);drops.push({x:e.x,y:e.y,r:8,life:10});burst(e.x,e.y,colors[e.type],18);enemies.splice(i,1);continue}if(d<P.r+e.r*.72&&P.inv<=0){P.hp-=e.type==='bot'?18:10;P.inv=.8;shake=12;burst(P.x,P.y,'#ff6f83',13);if(P.hp<=0){P.hp=0;gameOver();return}}}
+for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.life-=dt;const dd=Math.hypot(P.x-d.x,P.y-d.y);if(dd<65){coins++;drops.splice(i,1);msg('USDZ +1',330)}else if(d.life<=0)drops.splice(i,1)}
+for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.98;p.vy*=.98;p.life-=dt}particles=particles.filter(p=>p.life>0);shake*=.88;
+document.getElementById('hp').textContent=Math.ceil(P.hp);document.getElementById('coins').textContent=coins;document.getElementById('wave').textContent=wave;let s=Math.floor(t),mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');document.getElementById('time').textContent=mm+':'+ss}
+function cam(){return{x:Math.max(0,Math.min(world.w-W,P.x-W/2)),y:Math.max(0,Math.min(world.h-H,P.y-H/2))}}
+function drawWorld(C){x.fillStyle='#102c28';x.fillRect(0,0,W,H);const grid=110;for(let gx=-C.x%grid;gx<W;gx+=grid)for(let gy=-C.y%grid;gy<H;gy+=grid){let n=((Math.floor((gx+C.x)/grid)*31+Math.floor((gy+C.y)/grid)*17)&3);x.fillStyle=['#153a34','#173f38','#12332f','#1a433a'][n];x.beginPath();x.moveTo(gx+14,gy);x.lineTo(gx+grid-10,gy+10);x.lineTo(gx+grid-18,gy+grid-18);x.lineTo(gx,gy+grid-8);x.closePath();x.fill()}
+// decorative field nodes
+for(let i=0;i<24;i++){let px=(i*347)%world.w-C.x,py=(i*211+160)%world.h-C.y;if(px>-80&&px<W+80&&py>-80&&py<H+80){x.fillStyle=i%3?'#21483b':'#2a6b59';x.beginPath();x.arc(px,py,24+(i%4)*7,0,6.28);x.fill();x.fillStyle='#18372f';x.fillRect(px-5,py+18,10,34)}}}
+function draw(){let C=cam();x.save();if(shake)x.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);drawWorld(C);
+for(const d of drops){let sx=d.x-C.x,sy=d.y-C.y;x.save();x.shadowColor='#ffd75f';x.shadowBlur=14;x.fillStyle='#ffd75f';x.beginPath();x.arc(sx,sy,8,0,6.28);x.fill();x.fillStyle='#3a2c00';x.font='bold 9px monospace';x.textAlign='center';x.fillText('$',sx,sy+3);x.restore()}
+for(const e of enemies){let sx=e.x-C.x,sy=e.y-C.y;x.save();x.translate(sx,sy);x.globalAlpha=e.hit>0?.55:1;x.fillStyle=colors[e.type];x.shadowColor=colors[e.type];x.shadowBlur=12;x.beginPath();if(e.type==='impact'){x.moveTo(0,-e.r);x.lineTo(e.r,e.r);x.lineTo(-e.r,e.r);x.closePath()}else{x.arc(0,0,e.r,0,6.28)}x.fill();x.shadowBlur=0;x.fillStyle='#07110f';x.font='bold 10px monospace';x.textAlign='center';x.fillText(e.type==='slippage'?'SLIP':e.type==='mev'?'MEV':e.type==='impact'?'IMPACT':'BOT',0,3);x.fillStyle='#2a0d12';x.fillRect(-e.r,-e.r-14,e.r*2,5);x.fillStyle='#ff647b';x.fillRect(-e.r,-e.r-14,e.r*2*(e.hp/e.max),5);x.restore()}
+for(const p of particles){x.globalAlpha=Math.max(0,p.life);x.fillStyle=p.col;x.fillRect(p.x-C.x,p.y-C.y,4,4)}x.globalAlpha=1;
+let sx=P.x-C.x,sy=P.y-C.y;if(P.atk>0){x.strokeStyle='#8fffee';x.shadowColor='#8fffee';x.shadowBlur=18;x.lineWidth=7;x.beginPath();x.arc(sx,sy,95*(1-P.atk/.34)+35,0,6.28);x.stroke();x.shadowBlur=0}
+if(P.inv>0&&Math.floor(P.inv*14)%2===0)x.globalAlpha=.35;if(hero.complete&&hero.naturalWidth){const h=82,w=h*hero.naturalWidth/hero.naturalHeight;x.drawImage(hero,sx-w/2,sy-h*.72,w,h)}else{x.fillStyle='#8fffee';x.beginPath();x.arc(sx,sy,P.r,0,6.28);x.fill()}x.globalAlpha=1;x.restore()}
+function loop(ts){if(!running)return;if(!last)last=ts;const dt=Math.min(.033,(ts-last)/1000);last=ts;update(dt);draw();requestAnimationFrame(loop)}
+function reset(){P.x=world.w/2;P.y=world.h/2;P.hp=100;P.inv=0;P.dash=0;P.atk=0;enemies=[];drops=[];particles=[];t=0;wave=1;coins=0;kills=0;spawnT=.4;shake=0;last=0}
+function gameOver(){running=false;msg('FIELD LOST • '+kills+' ENEMIES CLEARED',2200);setTimeout(()=>{document.getElementById('start').style.display='flex';document.querySelector('.title').innerHTML='RUN<br>ENDED';document.querySelector('.sub').innerHTML=`Survived ${Math.floor(t)}s • Cleared ${kills} enemies • Collected ${coins} USDZ.<br>Enter the field again when ready.`;document.getElementById('startBtn').textContent='SURVIVE AGAIN ▶'},900)}
+document.getElementById('startBtn').onclick=()=>{document.getElementById('start').style.display='none';reset();running=true;requestAnimationFrame(loop)};draw();
+})();
+</script>
+</body></html>
