@@ -45,7 +45,7 @@ function update(dt){
  if(dx||dy){p.dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down');let s=p.speed*(p.dash?2:1);p.x+=dx/l*s*dt;p.y+=dy/l*s*dt}
  p.x=Math.max(28,Math.min(W()-28,p.x));p.y=Math.max(58,Math.min(H()-28,p.y));attack();
  if(spawn>Math.max(.55,1.2-t*.012)){spawn=0;spawnEnemy()}if(t>30&&!bossed)spawnBoss();
- for(let m of [...en,...boss]){m.anim+=dt*7;m.atk=Math.max(0,m.atk-dt);if(m.dead>0){m.dead-=dt;continue}m.hurt=Math.max(0,m.hurt-dt);let dx=p.x-m.x,dy=p.y-m.y,l=Math.hypot(dx,dy)||1;m.flip=dx<0;m.x+=dx/l*m.s*dt;m.y+=dy/l*m.s*dt;if(d(p,m)<p.r+m.r&&p.inv<=0){let hit=boss.includes(m)?24:11;p.hp-=hit;addDamage(p.x,p.y,hit,'player');p.inv=.65;p.hurt=.25;m.atk=.3}}
+ for(let m of [...en,...boss]){m.anim+=dt*7;m.atk=Math.max(0,m.atk-dt);if(m.dead>0){m.dead-=dt;continue}m.hurt=Math.max(0,m.hurt-dt);let dx=p.x-m.x,dy=p.y-m.y,l=Math.hypot(dx,dy)||1;m.flip=dx<0;m.x+=dx/l*m.s*dt;m.y+=dy/l*m.s*dt;if(d(p,m)<p.r+m.r&&p.inv<=0){let hit=boss.includes(m)?16:7;p.hp-=hit;addDamage(p.x,p.y,hit,'player');p.inv=.65;p.hurt=.25;m.atk=.3}}
  en=en.filter(m=>m.hp>0||m.dead>0);boss=boss.filter(m=>m.hp>0||m.dead>0);
  for(let i=coins.length-1;i>=0;i--){coins[i].a+=dt*5;if(d(p,coins[i])<40){p.coin++;coins.splice(i,1)}}
  for(let i=slashes.length-1;i>=0;i--){slashes[i].a+=dt*10;if(slashes[i].a>8)slashes.splice(i,1)}
