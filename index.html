@@ -6,70 +6,28 @@
 <meta name="theme-color" content="#031313">
 <title>Stabi Survive</title>
 <style>
-:root{--bg:#031312;--teal:#63d8cb;--teal2:#adfff3;--gold:#e6ce69;--text:#eefdfb;--muted:#8ba9a5;--line:#27524d}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 4% 27%,rgba(36,176,158,.18),transparent 15%),radial-gradient(circle at 84% 45%,rgba(19,104,169,.16),transparent 19%),radial-gradient(circle at 54% 98%,rgba(195,151,53,.09),transparent 12%),linear-gradient(180deg,#061a18,#031312 42%,#020f0e)}
-body:after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.12;background-image:linear-gradient(rgba(140,255,240,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(140,255,240,.02) 1px,transparent 1px);background-size:40px 40px}
-.page{position:relative;z-index:1;min-height:100svh;padding:0 16px;display:flex;flex-direction:column}.hero{width:min(1180px,100%);margin:auto;min-height:calc(100svh - 190px);display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:48px;padding:9vh 0 5vh}.copy{max-width:650px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:11px}.title{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:clamp(56px,8vw,94px);font-weight:900;letter-spacing:-.055em;line-height:.78}.title span{display:block;color:#9df7e7}.sub{margin:18px 0 13px;color:#67d1c4;font-size:clamp(20px,3vw,31px);font-weight:900}.desc{max-width:610px;color:#94aaa7;font-size:12px;line-height:1.72;margin:0}.actions{display:flex;gap:10px;align-items:center;margin-top:24px}.btn{appearance:none;border:1px solid #39726b;background:#092421;color:#d9f8f2;border-radius:9px;padding:12px 18px;font:900 11px ui-monospace,monospace;text-decoration:none;cursor:pointer;box-shadow:inset 0 -2px #041615}.btn.primary{color:#06211d;background:linear-gradient(180deg,#82eadc,#54c9bb);border-color:#9dfff2;box-shadow:inset 0 -3px #329b8f,0 0 18px rgba(79,218,201,.16)}.micro{margin-top:13px;color:#55746f;font-size:8px;line-height:1.7}
-.visual{position:relative;min-height:470px;display:grid;place-items:center}.orb{width:min(405px,78vw);aspect-ratio:1;border-radius:50%;position:relative;border:1px solid rgba(86,220,202,.22);box-shadow:0 0 55px rgba(54,207,191,.07);display:grid;place-items:center}.orb:before,.orb:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(117,232,218,.15)}.orb:before{inset:27px}.orb:after{inset:66px;border-style:dotted}.orbCharacter{width:58%;max-height:72%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 18px 20px rgba(0,0,0,.42)) drop-shadow(0 0 24px rgba(102,229,215,.18))}.blueGlow{position:absolute;width:270px;height:270px;border-radius:50%;background:#0d6cae;filter:blur(70px);opacity:.13;right:-45px;bottom:22px}.tealGlow{position:absolute;width:210px;height:210px;border-radius:50%;background:#36d7c4;filter:blur(70px);opacity:.10;left:-80px;top:30px}
-.footer{width:min(1180px,100%);margin:auto;border-top:1px solid #1f4844;padding:24px 0 18px;display:grid;grid-template-columns:1fr auto;gap:22px;align-items:end}.built{font-size:8px;letter-spacing:.12em;color:#66827e}.brand{display:flex;align-items:center;gap:12px;margin:9px 0 7px}.brandLogo{width:50px;height:50px;object-fit:contain;border:1px solid #5dd8ca;border-radius:10px;padding:4px;background:#0a2724;box-shadow:0 0 14px rgba(92,218,202,.18)}.brand b{font-size:17px}.fine{font-size:8px;line-height:1.6;color:#4f6d69}.footerActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.smallbtn{border:1px solid #2e625c;background:#071d1b;color:#9fc6c0;border-radius:7px;padding:9px 13px;text-decoration:none;font:800 8px ui-monospace,monospace;cursor:pointer}
-.modal{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:18px;background:rgba(1,10,10,.78);backdrop-filter:blur(9px)}.modal.open{display:grid}.note{width:min(650px,94vw);background:linear-gradient(180deg,#0a2b28,#071e1c);border:1px solid #5fc7bc;border-radius:15px;box-shadow:0 30px 90px #000b,0 0 26px rgba(74,210,195,.13);padding:22px;position:relative}.close{position:absolute;right:17px;top:17px;width:31px;height:31px;border:1px solid #436d68;background:#09211f;color:#b8d2ce;border-radius:8px;cursor:pointer}.note .kicker{font-size:8px;color:var(--gold);font-weight:900;letter-spacing:.12em}.note h2{margin:8px 0 16px;font-size:32px;letter-spacing:.02em}.rule{height:1px;background:#27514c;margin-bottom:15px}.note p{font-size:10px;line-height:1.7;color:#abc0bd}.meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.metaBox{border:1px solid #28544f;border-radius:9px;padding:10px;background:#071d1b}.metaBox small{display:block;color:#53746f;font-size:7px;margin-bottom:4px}.metaBox b,.metaBox a{color:#d8f1ed;font-size:10px;text-decoration:none}
-@media(max-width:760px){.page{padding:0 15px}.hero{grid-template-columns:1fr 1fr;gap:12px;min-height:calc(100svh - 190px);padding:7vh 0 3vh}.title{font-size:clamp(48px,14vw,68px)}.sub{font-size:clamp(17px,5vw,24px)}.desc{font-size:10px;max-width:420px}.visual{min-height:360px}.orb{width:min(330px,72vw)}.actions{gap:8px}.btn{padding:11px 15px;font-size:10px}.footer{grid-template-columns:1fr;gap:13px}.footerActions{justify-content:flex-start}.meta{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.hero{grid-template-columns:1.03fr .97fr;gap:2px;padding-top:12vh}.copy{position:relative;z-index:2}.visual{min-height:330px}.orb{width:300px;transform:translateX(18%)}.orbCharacter{width:56%}.desc{font-size:9px}.micro{font-size:7px}.brand b{font-size:15px}.brandLogo{width:46px;height:46px}.note{padding:20px}.note h2{font-size:28px}}
+:root{--bg:#031312;--teal:#63d8cb;--gold:#e6ce69;--text:#eefdfb;--muted:#8ba9a5}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text)}body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 4% 27%,rgba(36,176,158,.18),transparent 15%),radial-gradient(circle at 84% 45%,rgba(19,104,169,.16),transparent 19%),radial-gradient(circle at 54% 98%,rgba(195,151,53,.09),transparent 12%),linear-gradient(180deg,#061a18,#031312 42%,#020f0e)}.page{position:relative;z-index:1;min-height:100svh;padding:0 16px;display:flex;flex-direction:column}.hero{width:min(1180px,100%);margin:auto;min-height:calc(100svh - 190px);display:grid;grid-template-columns:1.02fr .98fr;align-items:center;gap:48px;padding:9vh 0 5vh}.copy{max-width:650px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.14em;color:var(--gold);margin-bottom:11px}.title{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:clamp(56px,8vw,94px);font-weight:900;letter-spacing:-.055em;line-height:.78}.title span{display:block;color:#9df7e7}.sub{margin:18px 0 13px;color:#67d1c4;font-size:clamp(20px,3vw,31px);font-weight:900}.desc{max-width:610px;color:#94aaa7;font-size:12px;line-height:1.72;margin:0}.actions{display:flex;gap:10px;margin-top:24px}.btn,.smallbtn{border:1px solid #39726b;background:#092421;color:#d9f8f2;border-radius:9px;padding:12px 18px;font:900 11px ui-monospace,monospace;text-decoration:none;cursor:pointer}.primary{color:#06211d;background:linear-gradient(180deg,#82eadc,#54c9bb);border-color:#9dfff2}.micro{margin-top:13px;color:#55746f;font-size:8px}.visual{position:relative;min-height:470px;display:grid;place-items:center}.orb{width:min(405px,78vw);aspect-ratio:1;border-radius:50%;position:relative;border:1px solid rgba(86,220,202,.22);box-shadow:0 0 55px rgba(54,207,191,.07);display:grid;place-items:center}.orb:before,.orb:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(117,232,218,.15)}.orb:before{inset:27px}.orb:after{inset:66px;border-style:dotted}.orbCharacter{width:58%;max-height:72%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 18px 20px #0008) drop-shadow(0 0 24px rgba(102,229,215,.18))}.footer{width:min(1180px,100%);margin:auto;border-top:1px solid #1f4844;padding:24px 0 18px;display:grid;grid-template-columns:1fr auto;gap:22px;align-items:end}.built{font-size:8px;letter-spacing:.12em;color:#66827e}.brand{display:flex;align-items:center;gap:12px;margin:9px 0 7px}.brandLogo{width:50px;height:50px;object-fit:contain;border:1px solid #5dd8ca;border-radius:10px;padding:4px;background:#0a2724}.brand b{font-size:17px}.fine{font-size:8px;line-height:1.6;color:#4f6d69}.footerActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.smallbtn{padding:9px 13px;font-size:8px}.modal{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:18px;background:#010a0ac7;backdrop-filter:blur(9px)}.modal.open{display:grid}.note{width:min(650px,94vw);background:linear-gradient(180deg,#0a2b28,#071e1c);border:1px solid #5fc7bc;border-radius:15px;padding:22px;position:relative}.close{position:absolute;right:17px;top:17px;width:31px;height:31px;border:1px solid #436d68;background:#09211f;color:#b8d2ce;border-radius:8px}.note .kicker{font-size:8px;color:var(--gold);font-weight:900}.note h2{margin:8px 0 16px;font-size:32px}.rule{height:1px;background:#27514c;margin-bottom:15px}.note p{font-size:10px;line-height:1.7;color:#abc0bd}.meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.metaBox{border:1px solid #28544f;border-radius:9px;padding:10px;background:#071d1b}.metaBox small{display:block;color:#53746f;font-size:7px;margin-bottom:4px}.metaBox b,.metaBox a{color:#d8f1ed;font-size:10px;text-decoration:none}@media(max-width:760px){.hero{grid-template-columns:1fr 1fr;gap:12px;padding:7vh 0 3vh}.title{font-size:clamp(48px,14vw,68px)}.desc{font-size:10px}.visual{min-height:360px}.orb{width:min(330px,72vw)}.footer{grid-template-columns:1fr}.footerActions{justify-content:flex-start}}@media(max-width:560px){.hero{grid-template-columns:1.03fr .97fr;gap:2px;padding-top:12vh}.visual{min-height:330px}.orb{width:300px;transform:translateX(18%)}.desc{font-size:9px}.micro{font-size:7px}}
 </style>
 </head>
 <body>
 <main class="page">
-  <section class="hero">
-    <div class="copy">
-      <div class="eyebrow">COMMUNITY-MADE • UNOFFICIAL</div>
-      <h1 class="title">STABI<span>SURVIVE</span></h1>
-      <div class="sub">SURVIVE THE STABILIZER NEXUS</div>
-      <p class="desc">Enter the Stabilizer-inspired arena, survive Slippage and MEV, collect USDZ, build XP, and fight your way to Level 15.</p>
-      <div class="actions">
-        <a class="btn primary" href="play-sharp.html?v=20260903hud4">BEGIN SURVIVE ▶</a>
-        <button class="btn" id="fieldBtn">FIELD NOTES</button>
-      </div>
-      <div class="micro">No wallet required • No name required • Community-made contribution</div>
-    </div>
-    <div class="visual">
-      <div class="tealGlow"></div><div class="blueGlow"></div>
-      <div class="orb"><img class="orbCharacter" src="assets/stabi-pixel-orb.webp?v=2" alt="Stabi pixel mascot"></div>
-    </div>
-  </section>
-  <footer class="footer">
-    <div>
-      <div class="built">BUILT FOR</div>
-      <div class="brand"><img class="brandLogo" src="assets/stabi-s-logo-cropped.webp?v=2" alt="Stabilizer S"><b>STABILIZER</b></div>
-      <div class="fine">Independent community game inspired by the Stabilizer ecosystem. This is not an official Stabilizer product.</div>
-    </div>
-    <div class="footerActions">
-      <span class="smallbtn">CREATOR · @Msabarrr</span>
-      <a class="smallbtn" href="https://app.stabilizer.finance/" target="_blank" rel="noopener">EXPLORE STABILIZER ↗</a>
-    </div>
-  </footer>
-</main>
-<div class="modal" id="fieldModal">
-  <div class="note">
-    <button class="close" id="closeField">×</button>
-    <div class="kicker">INDEPENDENT COMMUNITY GAME</div>
-    <h2>FIELD NOTES</h2>
-    <div class="rule"></div>
-    <p><b>Stabi Survive</b> is a fan-made survivor game inspired by the Stabilizer ecosystem. The goal is simple: survive waves of Slippage and MEV, collect USDZ, use Dash and Ultimate strategically, build XP, and defeat the final MEV boss at Level 15.</p>
-    <p>The game turns Stabilizer-inspired concepts into a lightweight community gameplay experience.</p>
-    <div class="meta">
-      <div class="metaBox"><small>CREATOR</small><b>@Msabarrr</b></div>
-      <div class="metaBox"><small>ECOSYSTEM</small><a href="https://app.stabilizer.finance/" target="_blank" rel="noopener">Explore Stabilizer ↗</a></div>
-      <div class="metaBox"><small>BUILD</small><b>Community-made • Unofficial</b></div>
-      <div class="metaBox"><small>MISSION</small><b>Survive to Level 15</b></div>
-    </div>
-  </div>
+<section class="hero">
+<div class="copy">
+<div class="eyebrow">COMMUNITY-MADE • UNOFFICIAL</div>
+<h1 class="title">STABI<span>SURVIVE</span></h1>
+<div class="sub">SURVIVE THE STABILIZER NEXUS</div>
+<p class="desc">Enter the Stabilizer-inspired arena, survive Slippage and MEV, collect USDZ, build XP, and fight your way to Level 15.</p>
+<div class="actions"><a class="btn primary" href="play-sharp.html?v=20260903hud4">BEGIN SURVIVE ▶</a><button class="btn" id="fieldBtn">FIELD NOTES</button></div>
+<div class="micro">No wallet required • No name required • Community-made contribution</div>
 </div>
-<script>
-const modal=document.getElementById('fieldModal');
-document.getElementById('fieldBtn').onclick=()=>modal.classList.add('open');
-document.getElementById('closeField').onclick=()=>modal.classList.remove('open');
-modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
-</script>
+<div class="visual"><div class="orb"><img class="orbCharacter" src="assets/stabi-pixel-orb.webp?v=2" alt="Stabi pixel mascot"></div></div>
+</section>
+<footer class="footer">
+<div><div class="built">BUILT FOR</div><div class="brand"><img class="brandLogo" src="assets/stabi-s-logo-cropped.webp?v=2" alt="Stabilizer S"><b>STABILIZER</b></div><div class="fine">Independent community game inspired by the Stabilizer ecosystem. This is not an official Stabilizer product.</div></div>
+<div class="footerActions"><a class="smallbtn" href="https://x.com/Msabarrr" target="_blank" rel="noopener">CREATOR · @Msabarrr ↗</a><a class="smallbtn" href="https://app.stabilizer.finance/" target="_blank" rel="noopener">EXPLORE STABILIZER ↗</a></div>
+</footer>
+</main>
+<div class="modal" id="fieldModal"><div class="note"><button class="close" id="closeField">×</button><div class="kicker">INDEPENDENT COMMUNITY GAME</div><h2>FIELD NOTES</h2><div class="rule"></div><p><b>Stabi Survive</b> is a fan-made survivor game inspired by the Stabilizer ecosystem. Survive waves of Slippage and MEV, collect USDZ, use Dash and Ultimate strategically, build XP, and defeat the final MEV boss at Level 15.</p><div class="meta"><div class="metaBox"><small>CREATOR</small><a href="https://x.com/Msabarrr" target="_blank" rel="noopener">@Msabarrr ↗</a></div><div class="metaBox"><small>ECOSYSTEM</small><a href="https://app.stabilizer.finance/" target="_blank" rel="noopener">Explore Stabilizer ↗</a></div><div class="metaBox"><small>BUILD</small><b>Community-made • Unofficial</b></div><div class="metaBox"><small>MISSION</small><b>Survive to Level 15</b></div></div></div></div>
+<script>const m=document.getElementById('fieldModal');fieldBtn.onclick=()=>m.classList.add('open');closeField.onclick=()=>m.classList.remove('open');m.onclick=e=>{if(e.target===m)m.classList.remove('open')}</script>
 </body>
 </html>
