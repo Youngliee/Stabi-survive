@@ -1,0 +1,1 @@
+HD256 atlas upload is prepared from the newest Stabi idle/walk/attack/dash/hurt/death assets. Source cells remain 256x256; player renders at 128x128.
