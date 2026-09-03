@@ -17,6 +17,15 @@
  const waveOld="function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=5&&bossStage<1)spawnBossWave(1);else if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=15&&bossStage<3)spawnBossWave(3)}";
  const waveSafe="function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=15&&!finalSpawned){spawnBossWave(3);return}if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=5&&bossStage<1)spawnBossWave(1)}";
  if(spawnPos<0)throw new Error('Final boss spawn marker');let tail=s.slice(spawnPos);if(!tail.includes(waveOld))throw new Error('Final boss wave marker');tail=tail.replace(waveOld,waveSafe);s=s.slice(0,spawnPos)+tail;
+ const writeNeedle="document.open();document.write(h);document.close();";
+ const shareInject=`const shareBtnNeedle='<button id="winagain" class="btn">PLAY AGAIN</button>';
+if(!h.includes('id="sharex"')&&h.includes(shareBtnNeedle)){
+ h=h.replace(shareBtnNeedle,'<button id="sharex" class="btn" style="margin-bottom:9px;background:#050505;color:#fff;border:1px solid #63ddd5">SHARE ON X</button>'+shareBtnNeedle);
+ const bodyNeedle='</body></html>';
+ const shareScript='<script>(()=>{const b=document.getElementById("sharex");if(!b)return;b.onclick=()=>{const ko=document.getElementById("killv")?.textContent||"0",usdz=document.getElementById("coinv")?.textContent||"0",eth=document.getElementById("ethv")?.textContent||"0";const text="I cleared Level 15 in Stabi Survive and defeated the Final MEV Boss! ⚔️\\n\\nKO: "+ko+" | USDZ: "+usdz+" | ETH: "+eth+"\\n\\nCan you survive to Level 15?\\n#StabiSurvive #Stabilizer";const url=new URL("play-sharp.html",location.href).href.split("?")[0];open("https://x.com/intent/post?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url),"_blank","noopener,noreferrer")}})();<\\/script></body></html>';
+ if(h.includes(bodyNeedle))h=h.replace(bodyNeedle,shareScript);
+}`;
+ if(!s.includes(writeNeedle))throw new Error('Share X write marker');s=s.replace(writeNeedle,shareInject+'\n'+writeNeedle);
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
