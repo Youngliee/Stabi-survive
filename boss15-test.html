@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Stabi Survive — MEV Boss Level 15 Test</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#031012;color:#eaffff;font-family:Arial,sans-serif}
+body{background:
+radial-gradient(circle at 50% 44%,rgba(19,129,136,.22),transparent 36%),
+linear-gradient(180deg,#05191d 0%,#061417 55%,#02090b 100%)}
+#arena{position:absolute;inset:0;overflow:hidden}
+#arena:before{content:"";position:absolute;inset:0;background:
+linear-gradient(rgba(86,220,216,.07) 1px,transparent 1px),
+linear-gradient(90deg,rgba(86,220,216,.07) 1px,transparent 1px);
+background-size:64px 64px;transform:perspective(500px) rotateX(58deg) scale(1.55);transform-origin:50% 80%;opacity:.55}
+#arena:after{content:"";position:absolute;left:50%;bottom:10%;width:min(82vw,760px);height:170px;transform:translateX(-50%);border:1px solid rgba(90,242,232,.22);border-radius:50%;box-shadow:0 0 60px rgba(52,228,219,.1),inset 0 0 60px rgba(52,228,219,.06)}
+.top{position:fixed;z-index:5;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(92vw,620px);text-align:center}
+.tag{font-size:12px;font-weight:900;letter-spacing:2px;color:#75f6ed}
+.title{margin:4px 0 8px;font-size:clamp(18px,5vw,30px);font-weight:1000;letter-spacing:1px}
+.barShell{height:15px;border:1px solid #ff5b52;background:#2a0d0d;border-radius:999px;overflow:hidden;box-shadow:0 0 20px rgba(255,69,59,.2)}
+#bossHp{height:100%;width:100%;background:linear-gradient(90deg,#ff3931,#ff775d);transition:width .22s}
+.meta{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;font-weight:900;color:#b9fff9}
+#bossWrap{position:absolute;z-index:2;left:50%;top:54%;width:min(58vw,430px);aspect-ratio:1/1;transform:translate(-50%,-50%);filter:drop-shadow(0 20px 18px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(255,45,36,.17))}
+#sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:auto}
+.shadow{position:absolute;left:50%;top:77%;width:min(45vw,350px);height:52px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(0,0,0,.45);filter:blur(8px)}
+.status{position:fixed;z-index:6;left:50%;bottom:108px;transform:translateX(-50%);padding:7px 14px;border:1px solid rgba(102,241,232,.42);border-radius:999px;background:rgba(4,25,29,.85);font-size:12px;font-weight:900;letter-spacing:1px;white-space:nowrap}
+.controls{position:fixed;z-index:6;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:8px;width:min(94vw,650px);justify-content:center;flex-wrap:wrap}
+button,a.btn{appearance:none;border:1px solid #58e9df;background:#08292d;color:#eaffff;border-radius:12px;padding:11px 14px;font-weight:900;font-size:12px;text-decoration:none;box-shadow:0 0 14px rgba(63,225,214,.08)}
+button:active,a.btn:active{transform:translateY(1px);background:#0e3b40}
+button.danger{border-color:#ff665e;background:#301212}
+.small{position:fixed;right:10px;top:10px;z-index:7;color:#6ddfd8;font-size:10px;font-weight:800}
+@media(max-width:650px){
+#bossWrap{width:min(78vw,390px);top:55%}.status{bottom:122px}.controls{gap:6px}button,a.btn{padding:10px 10px;font-size:11px}.top{width:94vw}}
+</style>
+</head>
+<body>
+<div id="arena"><div class="shadow"></div><div id="bossWrap"><canvas id="sprite"></canvas></div></div>
+<div class="top">
+  <div class="tag">LEVEL 15 ONLY</div>
+  <div class="title">MEV BOSS — SPRITE TEST</div>
+  <div class="barShell"><div id="bossHp"></div></div>
+  <div class="meta"><span id="hpText">HP 900 / 900</span><span id="frameText">WALK • FRAME 1/8</span></div>
+</div>
+<div id="status" class="status">WALK</div>
+<div class="controls">
+  <button data-act="walk">WALK</button>
+  <button data-act="attack">ATTACK</button>
+  <button data-act="hurt">HURT</button>
+  <button class="danger" data-act="death">DEATH</button>
+  <button id="reset">RESET</button>
+  <a class="btn" href="play-sharp.html">GAME</a>
+</div>
+<div class="small">Original frames • no redraw</div>
+<script>
+(()=>{
+const atlas=new Image();
+async function loadAtlas(){
+ let b64='';
+ for(let i=0;i<8;i++){
+   const n=String(i).padStart(2,'0');
+   const r=await fetch(`assets/atlases/mev-boss-lvl15-atlas-${n}.b64?v=20260903boss15a`);
+   if(!r.ok)throw new Error('boss atlas '+n);
+   b64+=(await r.text()).replace(/\s+/g,'');
+ }
+ const bin=atob(b64),bytes=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ atlas.src=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
+}
+loadAtlas().catch(e=>{document.getElementById('status').textContent='ASSET ERROR';console.error(e)});
+const cv=document.getElementById('sprite'),ctx=cv.getContext('2d');
+const hp=document.getElementById('bossHp'),hpText=document.getElementById('hpText'),frameText=document.getElementById('frameText'),status=document.getElementById('status');
+const CELL=128, defs={
+ walk:{row:0,count:8,fps:7,loop:true},
+ attack:{row:1,count:8,fps:10,loop:false},
+ hurt:{row:2,count:4,fps:8,loop:false},
+ death:{row:3,count:6,fps:5,loop:false}
+};
+let action='walk',frame=0,acc=0,last=performance.now(),alive=true,bossHP=900;
+function resize(){
+ const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);
+ cv.width=Math.max(1,Math.round(r.width*d));cv.height=Math.max(1,Math.round(r.height*d));
+}
+addEventListener('resize',resize);
+function setAction(a){
+ if(!alive&&a!=='death'&&a!=='walk')return;
+ action=a;frame=0;acc=0;status.textContent=a.toUpperCase();
+ if(a==='hurt'){bossHP=Math.max(0,bossHP-120);hp.style.width=(bossHP/900*100)+'%';hpText.textContent=`HP ${bossHP} / 900`;if(bossHP<=0)setTimeout(()=>setAction('death'),120)}
+ if(a==='death'){alive=false;bossHP=0;hp.style.width='0%';hpText.textContent='HP 0 / 900'}
+}
+function resetBoss(){alive=true;bossHP=900;hp.style.width='100%';hpText.textContent='HP 900 / 900';setAction('walk')}
+document.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>setAction(b.dataset.act));
+document.getElementById('reset').onclick=resetBoss;
+addEventListener('keydown',e=>{if(e.key==='1')setAction('walk');if(e.key==='2')setAction('attack');if(e.key==='3')setAction('hurt');if(e.key==='4')setAction('death');if(e.key.toLowerCase()==='r')resetBoss()});
+function draw(){
+ resize();
+ const d=defs[action],ratio=cv.width/cv.height;
+ ctx.clearRect(0,0,cv.width,cv.height);
+ const dw=cv.width,dh=cv.height;
+ ctx.imageSmoothingEnabled=true;
+ ctx.drawImage(atlas,frame*CELL,d.row*CELL,CELL,CELL,0,0,dw,dh);
+ frameText.textContent=`${action.toUpperCase()} • FRAME ${frame+1}/${d.count}`;
+}
+function loop(now){
+ const dt=Math.min(.05,(now-last)/1000);last=now;
+ if(atlas.complete&&atlas.naturalWidth){
+   const d=defs[action];acc+=dt;
+   const step=1/d.fps;
+   while(acc>=step){
+     acc-=step;
+     if(frame<d.count-1)frame++;
+     else if(d.loop)frame=0;
+     else if(action==='attack'||action==='hurt'){setAction(alive?'walk':'death');break}
+   }
+   draw();
+ }
+ requestAnimationFrame(loop);
+}
+atlas.onload=()=>{resize();requestAnimationFrame(loop)};
+})();
+</script>
+</body></html>
