@@ -7,8 +7,11 @@
  if(s.includes(mapRun))s=s.replace(mapRun,"window.__STABI_MAP_READY__=false;");
  const mascotOld='assets/ui/stabi-hud-mascot.webp?v=37e5e6ed';if(s.includes(mascotOld))s=s.replaceAll(mascotOld,'assets/ui/stabi-hud-mascot.webp?v=07bab4c1');
  const finalBossAtlasOld='assets/atlases/mev-boss-lvl15-final-';
- if(!s.includes(finalBossAtlasOld))throw new Error('Final boss atlas marker');s=s.replaceAll(finalBossAtlasOld,'assets/atlases/mev-boss-lvl15-atlas-');
- if(s.includes('?v=20260903boss15final2'))s=s.replaceAll('?v=20260903boss15final2','?v=20260903boss15a');
+ if(!s.includes(finalBossAtlasOld))throw new Error('Final boss atlas marker');s=s.replaceAll(finalBossAtlasOld,'assets/atlases/mev-boss-lvl15-hd-');
+ if(s.includes('?v=20260903boss15final2'))s=s.replaceAll('?v=20260903boss15final2','?v=20260904boss15hd1');
+ const hdLoopOld="for(let i=0;i<3;i++){const n=String(i).padStart(2,'0'),r=await fetch('assets/atlases/mev-boss-lvl15-hd-'+n+'.b64?v=20260904boss15hd1')";
+ const hdLoopNew="for(let i=0;i<2;i++){const n=String(i).padStart(2,'0'),r=await fetch('assets/atlases/mev-boss-lvl15-hd-'+n+'.b64?v=20260904boss15hd1')";
+ if(!s.includes(hdLoopOld))throw new Error('Final boss HD chunk marker');s=s.replace(hdLoopOld,hdLoopNew);
  const finalBossCellOld='const cs=192;let row=0,frames=8';
  if(!s.includes(finalBossCellOld))throw new Error('Final boss cell marker');s=s.replace(finalBossCellOld,"const cs=Math.floor(Math.min((im.naturalWidth||im.width)/8,(im.naturalHeight||im.height)/4));let row=0,frames=8");
  const bossLoaderNeedle='async function loadMevBossAtlas(){';
