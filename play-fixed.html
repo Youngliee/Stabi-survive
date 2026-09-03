@@ -6,13 +6,13 @@
  const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
  if(s.includes(mapRun))s=s.replace(mapRun,"window.__STABI_MAP_READY__=false;");
  const mascotOld='assets/ui/stabi-hud-mascot.webp?v=37e5e6ed';if(s.includes(mascotOld))s=s.replaceAll(mascotOld,'assets/ui/stabi-hud-mascot.webp?v=07bab4c1');
- const finalBossAtlasOld='assets/atlases/mev-boss-lvl15-final-';
- if(!s.includes(finalBossAtlasOld))throw new Error('Final boss atlas marker');s=s.replaceAll(finalBossAtlasOld,'assets/atlases/mev-boss-lvl15-hd-');
- if(s.includes('?v=20260903boss15final2'))s=s.replaceAll('?v=20260903boss15final2','?v=20260904boss15hd1602');
- const finalBossLoopOld="for(let i=0;i<3;i++){const n=String(i).padStart(2,'0'),r=await fetch('assets/atlases/mev-boss-lvl15-hd-'+n+'.b64?v=20260904boss15hd1602')";
- if(!s.includes(finalBossLoopOld))throw new Error('Final boss HD chunk marker');s=s.replace(finalBossLoopOld,finalBossLoopOld.replace('i<3','i<2'));
+ const bossFnRe=/async function loadMevBossAtlas\(\)\{[\s\S]*?\n\}/;
+ const bossFnNew=`async function loadBossImageParts(prefix,count,tag){let b64='';const parts=await Promise.all(Array.from({length:count},async(_,i)=>{const n=String(i).padStart(2,'0'),r=await fetch(prefix+n+'.b64?v='+tag);if(!r.ok)throw new Error('Boss atlas '+n+': '+r.status);return(await r.text()).replace(/[^A-Za-z0-9+/]/g,'')}));b64=parts.join('');b64+='='.repeat((4-b64.length%4)%4);const url='data:image/avif;base64,'+b64;return await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Boss atlas decode failed'));im.src=url})}
+function bossAtlasHasPixels(im){try{const c=document.createElement('canvas');c.width=128;c.height=64;const g=c.getContext('2d',{willReadFrequently:true});g.clearRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);const d=g.getImageData(0,0,c.width,c.height).data;let n=0;for(let i=3;i<d.length;i+=4)if(d[i]>8&&++n>12)return true;return false}catch(e){return true}}
+async function loadMevBossAtlas(){try{const hd=await loadBossImageParts('assets/atlases/mev-boss-lvl15-hd-',2,'20260904-hd160-safe1');if((hd.naturalWidth||hd.width)>=2048&&bossAtlasHasPixels(hd)){window.__STABI_BOSS_HD__=true;return hd}}catch(e){console.warn('Final boss HD fallback',e)}window.__STABI_BOSS_HD__=false;return await loadBossImageParts('assets/atlases/mev-boss-lvl15-atlas-',3,'20260904-visible-fallback1')}`;
+ if(!bossFnRe.test(s))throw new Error('Final boss loader marker');s=s.replace(bossFnRe,bossFnNew);
  const finalBossCellOld='const cs=192;let row=0,frames=8';
- if(!s.includes(finalBossCellOld))throw new Error('Final boss cell marker');s=s.replace(finalBossCellOld,"const cs=256;let row=0,frames=8");
+ if(!s.includes(finalBossCellOld))throw new Error('Final boss cell marker');s=s.replace(finalBossCellOld,"const cs=Math.floor(Math.min((im.naturalWidth||im.width)/8,(im.naturalHeight||im.height)/4));let row=0,frames=8");
  const finalBossSizeOld='const sz=124*(m.scale||1);ctx.save();';
  if(!s.includes(finalBossSizeOld))throw new Error('Final boss size marker');s=s.replace(finalBossSizeOld,'const sz=160;ctx.save();');
  const bossLoaderNeedle='async function loadMevBossAtlas(){';
