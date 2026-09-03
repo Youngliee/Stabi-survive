@@ -27,22 +27,6 @@ async function loadMevBossAtlas(){try{const hd=await loadBossImageParts('assets/
  const waveSafe="function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=15&&!finalSpawned){spawnBossWave(3);return}if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=5&&bossStage<1)spawnBossWave(1)}";
  if(spawnPos<0)throw new Error('Final boss spawn marker');let tail=s.slice(spawnPos);if(!tail.includes(waveOld))throw new Error('Final boss wave marker');tail=tail.replace(waveOld,waveSafe);s=s.slice(0,spawnPos)+tail;
  const writeNeedle="document.open();document.write(h);document.close();";
- const loadingInject=`const loadStatusOld='<div id="status" class="status">Loading full Stabi animation set…</div>';
-const loadStatusNew='<div id="status" class="status"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px;font-weight:900;letter-spacing:.5px"><span id="loadlabel">LOADING ASSETS</span><b id="loadpct" style="color:#dffffb">0%</b></div><div style="height:9px;padding:1px;border:1px solid #55ddd5;border-radius:99px;background:#123436;overflow:hidden"><i id="loadfill" style="display:block;width:0%;height:100%;border-radius:99px;background:#63ddd5;box-shadow:0 0 10px #63ddd577;transition:width .18s ease"></i></div></div>';
-if(h.includes(loadStatusOld))h=h.replace(loadStatusOld,loadStatusNew);
-const loadFnNeedle='async function loadFullAssets(){';
-const loadFnHead="let __loadPct=0;function __setLoadPct(v,label){__loadPct=Math.max(__loadPct,Math.min(100,v));const p=document.getElementById('loadpct'),f=document.getElementById('loadfill'),l=document.getElementById('loadlabel');if(p)p.textContent=__loadPct+'%';if(f)f.style.width=__loadPct+'%';if(l&&label)l.textContent=label}\nasync function loadFullAssets(){";
-if(h.includes(loadFnNeedle))h=h.replace(loadFnNeedle,loadFnHead);
-const lp1="const encoded=await stabiBundle();if(encoded.length!==20)throw new Error('Bundle Stabi belum lengkap');";if(h.includes(lp1))h=h.replace(lp1,lp1+"__setLoadPct(20,'LOADING STABI');");
-const lp2="await Promise.all(stabiOrder.map(async([state,dir],i)=>{stabiSpriteSet[state][dir].image=await transparentJpeg(encoded[i])}));";if(h.includes(lp2))h=h.replace(lp2,lp2+"__setLoadPct(55,'STABI ANIMATIONS');");
-const lp3="await Promise.all(slippageSheets.map(loadSlippageSprite));";if(h.includes(lp3))h=h.replace(lp3,lp3+"__setLoadPct(70,'SLIPPAGE SPRITES');");
-const lp4="await Promise.all(Object.entries(paths).map(async([name,path])=>{img[name]=await loadImage(path)}));";if(h.includes(lp4))h=h.replace(lp4,lp4+"__setLoadPct(82,'GAME ASSETS');");
-const lp5="img.bossRegular=await loadImage('assets/atlases/mech-boss-atlas.webp');";if(h.includes(lp5))h=h.replace(lp5,lp5+"__setLoadPct(88,'MEV BOSSES');");
-const lp6="img.bossFinal=await loadMevBossAtlas();img.ultfx=await loadUltimateFx();";if(h.includes(lp6))h=h.replace(lp6,lp6+"__setLoadPct(95,'FINAL BOSS + ULT');");
-const lp7="await Promise.all([loadMevSprites(),loadDashSprites()]);";if(h.includes(lp7))h=h.replace(lp7,lp7+"__setLoadPct(98,'FINALIZING');");
-const loadDoneOld="loadFullAssets().then(()=>{window.__STABI_SPRITES_READY__=true;window.__SLIPPAGE_SPRITES_READY__=true;$('status').textContent='New Stabi + Slippage sprites ready ✓';$('play').disabled=false}).catch(e=>{window.__STABI_SPRITES_READY__=false;window.__SLIPPAGE_SPRITES_READY__=false;$('status').textContent='Asset error: '+e.message});";
-const loadDoneNew="loadFullAssets().then(()=>{window.__STABI_SPRITES_READY__=true;window.__SLIPPAGE_SPRITES_READY__=true;__setLoadPct(100,'READY');$('play').disabled=false}).catch(e=>{window.__STABI_SPRITES_READY__=false;window.__SLIPPAGE_SPRITES_READY__=false;const st=$('status');if(st)st.textContent='Asset error: '+e.message});";
-if(h.includes(loadDoneOld))h=h.replace(loadDoneOld,loadDoneNew);`;
  const shareInject=`const shareBtnNeedle='<button id="winagain" class="btn">PLAY AGAIN</button>';
 if(!h.includes('id="sharex"')&&h.includes(shareBtnNeedle)){
  h=h.replace(shareBtnNeedle,'<button id="sharex" class="btn" style="margin-bottom:9px;background:#050505;color:#fff;border:1px solid #63ddd5;pointer-events:auto;touch-action:manipulation;position:relative;z-index:99">SHARE ON X</button>'+shareBtnNeedle);
@@ -50,7 +34,7 @@ if(!h.includes('id="sharex"')&&h.includes(shareBtnNeedle)){
  const shareScript='<script>(()=>{const b=document.getElementById("sharex");if(!b)return;const go=()=>{const ko=document.getElementById("killv")?.textContent||"0",usdz=document.getElementById("coinv")?.textContent||"0",eth=document.getElementById("ethv")?.textContent||"0";const text="I cleared Level 15 in Stabi Survive and defeated the Final MEV Boss! ⚔️\\n\\nKO: "+ko+" | USDZ: "+usdz+" | ETH: "+eth+"\\n\\nCan you survive to Level 15?\\n#StabiSurvive #Stabilizer";const url=new URL("play-sharp.html",location.href).href.split("?")[0];const share="https://twitter.com/intent/tweet?text="+encodeURIComponent(text)+"&url="+encodeURIComponent(url);window.top.location.href=share};b.onclick=e=>{e.preventDefault();e.stopPropagation();go()};b.ontouchend=e=>{e.preventDefault();e.stopPropagation();go()}})();<\\/script></body></html>';
  if(h.includes(bodyNeedle))h=h.replace(bodyNeedle,shareScript);
 }`;
- if(!s.includes(writeNeedle))throw new Error('Share X write marker');s=s.replace(writeNeedle,loadingInject+'\n'+shareInject+'\n'+writeNeedle);
+ if(!s.includes(writeNeedle))throw new Error('Share X write marker');s=s.replace(writeNeedle,shareInject+'\n'+writeNeedle);
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
