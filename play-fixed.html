@@ -1,15 +1,12 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-fixed-base.html?v=20260904nomap1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
+ const r=await fetch('play-fixed-base.html?v=20260904nomap2');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
  const bgPatch='h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")';
  if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');
  const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
  if(s.includes(mapRun))s=s.replace(mapRun,"window.__STABI_MAP_READY__=false;");
  const mascotOld='assets/ui/stabi-hud-mascot.webp?v=37e5e6ed';
  if(s.includes(mascotOld))s=s.replaceAll(mascotOld,'assets/ui/stabi-hud-mascot.webp?v=07bab4c1');
- const hudNeedle="document.write(h);";
- const hudInject="h=h.replace('</style>','@media(max-width:800px),(pointer:coarse){.hud{left:4px;right:4px;gap:3px;display:grid;grid-template-columns:118px repeat(4,minmax(0,1fr));align-items:start}.hp{width:118px;min-width:118px;min-height:44px;padding:4px 4px 4px 42px}.hudMascot{width:35px;height:35px;left:3px}.hp #hpv{font-size:11px;margin-left:1px}.maxHp{font-size:7px}.hp .bar{height:7px;margin-top:2px}.box:not(.hp){min-width:0;padding:5px 2px;font-size:8px;text-align:center;white-space:nowrap}.ethHud{justify-content:center;gap:1px}.ethHud img{width:12px;height:12px}}</style>');document.write(h);";
- if(!s.includes(hudNeedle))throw new Error('HUD patch marker');s=s.replace(hudNeedle,hudInject);
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
