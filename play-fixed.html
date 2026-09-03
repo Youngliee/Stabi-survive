@@ -5,6 +5,8 @@
  if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');
  const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
  if(s.includes(mapRun))s=s.replace(mapRun,"window.__STABI_MAP_READY__=false;");
+ const mascotOld='assets/ui/stabi-hud-mascot.webp?v=37e5e6ed';
+ if(s.includes(mascotOld))s=s.replaceAll(mascotOld,'assets/ui/stabi-hud-mascot.webp?v=07bab4c1');
  const hudNeedle="document.write(h);";
  const hudInject="h=h.replace('</style>','@media(max-width:800px),(pointer:coarse){.hud{left:4px;right:4px;gap:3px;display:grid;grid-template-columns:118px repeat(4,minmax(0,1fr));align-items:start}.hp{width:118px;min-width:118px;min-height:44px;padding:4px 4px 4px 42px}.hudMascot{width:35px;height:35px;left:3px}.hp #hpv{font-size:11px;margin-left:1px}.maxHp{font-size:7px}.hp .bar{height:7px;margin-top:2px}.box:not(.hp){min-width:0;padding:5px 2px;font-size:8px;text-align:center;white-space:nowrap}.ethHud{justify-content:center;gap:1px}.ethHud img{width:12px;height:12px}}</style>');document.write(h);";
  if(!s.includes(hudNeedle))throw new Error('HUD patch marker');s=s.replace(hudNeedle,hudInject);
