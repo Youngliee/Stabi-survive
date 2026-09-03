@@ -8,9 +8,9 @@
  const marker="const W=()=>cv.width/DPR,H=()=>cv.height/DPR;const img={};";
  const loader=`${marker}
 async function loadStaticMap(){
- const parts=await Promise.all(Array.from({length:10},async(_,i)=>{const n=String(i).padStart(2,'0'),r=await fetch(`assets/maps/stabilizer-nexus-map-${n}.b64?v=staticmap1`);if(!r.ok)throw new Error(`Map ${n}: ${r.status}`);return(await r.text()).trim()}));
+ const parts=await Promise.all(Array.from({length:10},async(_,i)=>{const n=String(i).padStart(2,'0'),r=await fetch('assets/maps/stabilizer-nexus-map-'+n+'.b64?v=staticmap1');if(!r.ok)throw new Error('Map '+n+': '+r.status);return(await r.text()).trim()}));
  const b64=parts.join(''),bin=atob(b64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
- const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage=`linear-gradient(rgba(1,10,13,.08),rgba(1,10,13,.08)),url("${url}")`;window.__STABI_MAP_READY__=true
+ const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage='linear-gradient(rgba(1,10,13,.08),rgba(1,10,13,.08)),url("'+url+'")';window.__STABI_MAP_READY__=true
 }
 loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
  if(!h.includes(marker))throw new Error('Map marker');h=h.replace(marker,loader);
@@ -20,7 +20,7 @@ loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
  const imageLoaderMarker="function loadImage(path){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Asset gagal: '+path));im.src=path})}";
  const bossAtlasLoader=`${imageLoaderMarker}
 async function loadMevBossAtlas(){
- let b64='';for(let i=0;i<3;i++){const n=String(i).padStart(2,'0'),r=await fetch(`assets/atlases/mev-boss-lvl15-final-${n}.b64?v=20260903boss15final2`);if(!r.ok)throw new Error(`MEV Boss atlas ${n}: ${r.status}`);b64+=(await r.text()).replace(/\s+/g,'')}
+ let b64='';for(let i=0;i<3;i++){const n=String(i).padStart(2,'0'),r=await fetch('assets/atlases/mev-boss-lvl15-final-'+n+'.b64?v=20260903boss15final2');if(!r.ok)throw new Error('MEV Boss atlas '+n+': '+r.status);b64+=(await r.text()).replace(/\\s+/g,'')}
  const bin=atob(b64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
  const url=URL.createObjectURL(new Blob([bytes],{type:'image/avif'}));return await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('MEV Boss atlas decode failed'));im.src=url})
 }`;
@@ -46,13 +46,13 @@ async function loadMevBossAtlas(){
  if(!h.includes(oldUltDraw))throw new Error('Ultimate draw marker');h=h.replace(oldUltDraw,newUltDraw);
 
  const stateMarker="const keys={up:0,down:0,left:0,right:0};let run=false,last=0,t=0,spawn=0,en=[],bosses=[],drops=[],slashes=[],floatNums=[],bossStage=0,finalSpawned=false,bossWaveMax=0;";
- if(!h.includes(stateMarker))throw new Error('Portal state marker');h=h.replace(stateMarker,stateMarker+"let portalActive=false,portal={x:0,y:0,r:58,pulse:0};");
+ if(!h.includes(stateMarker))throw new Error('Portal state marker');h=h.replace(stateMarker,stateMarker+"let portalActive=false,portal={x:0,y:0,r:58,pulse:0,enterReady:false};");
  const resetMarker="function reset(){t=spawn=0;en=[];bosses=[];drops=[];slashes=[];floatNums=[];bossStage=0;finalSpawned=false;bossWaveMax=0;";
- if(!h.includes(resetMarker))throw new Error('Portal reset marker');h=h.replace(resetMarker,resetMarker+"portalActive=false;portal={x:0,y:0,r:58,pulse:0};");
+ if(!h.includes(resetMarker))throw new Error('Portal reset marker');h=h.replace(resetMarker,resetMarker+"portalActive=false;portal={x:0,y:0,r:58,pulse:0,enterReady:false};");
  const spawnMarker="if(spawn>Math.max(.5,1.16-t*.009)){spawn=0;spawnEnemy()}maybeBossWave();";
  if(!h.includes(spawnMarker))throw new Error('Portal spawn marker');h=h.replace(spawnMarker,"if(!portalActive&&spawn>Math.max(.5,1.16-t*.009)){spawn=0;spawnEnemy()}if(!portalActive)maybeBossWave();");
  const winMarker="if(finalSpawned&&bossStage===3&&bosses.length===0){end(true);return}hud()}";
- const portalWin="if(finalSpawned&&bossStage===3&&bosses.length===0&&!portalActive){portalActive=true;portal.x=W()/2;portal.y=Math.max(115,H()*.16);portal.pulse=0;en=[];slashes=[];announce('PORTAL OPEN • ENTER TO COMPLETE')}if(portalActive){portal.pulse+=dt;if(d(p,portal)<portal.r){end(true);return}}hud()}";
+ const portalWin="if(finalSpawned&&bossStage===3&&bosses.length===0&&!portalActive){portalActive=true;portal.x=W()/2;portal.y=Math.max(115,H()*.16);portal.pulse=0;portal.enterReady=false;en=[];slashes=[];announce('PORTAL OPEN • ENTER TO COMPLETE')}if(portalActive){portal.pulse+=dt;const pd=d(p,portal);if(!portal.enterReady&&pd>portal.r+18)portal.enterReady=true;if(portal.enterReady&&pd<portal.r){end(true);return}}hud()}";
  if(!h.includes(winMarker))throw new Error('Portal win marker');h=h.replace(winMarker,portalWin);
  const drawMarker="function draw(){ctx.setTransform(DPR,0,0,DPR,0,0);bg();drops.forEach(drawDrop);en.forEach(m=>mob(m,false));bosses.forEach(m=>mob(m,true));hero();slash();drawFloats()}";
  const portalDraw=`function drawPortal(){if(!portalActive)return;const q=portal.pulse,g=.55+.45*Math.sin(q*4),rx=44+6*Math.sin(q*3);ctx.save();ctx.translate(portal.x,portal.y);ctx.globalCompositeOperation='lighter';ctx.shadowColor='#62fff4';ctx.shadowBlur=28+18*g;ctx.strokeStyle='rgba(151,255,249,.92)';ctx.lineWidth=7;ctx.beginPath();ctx.ellipse(0,0,rx,62,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='rgba(51,222,213,.55)';ctx.lineWidth=18;ctx.beginPath();ctx.ellipse(0,0,rx-4,56,0,0,Math.PI*2);ctx.stroke();const grad=ctx.createRadialGradient(0,0,4,0,0,50);grad.addColorStop(0,'rgba(220,255,252,.78)');grad.addColorStop(.35,'rgba(69,238,226,.38)');grad.addColorStop(1,'rgba(5,44,48,0)');ctx.fillStyle=grad;ctx.beginPath();ctx.ellipse(0,0,40,54,0,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';ctx.shadowBlur=10;ctx.fillStyle='#dffffc';ctx.font='900 12px Arial';ctx.textAlign='center';ctx.fillText('ENTER PORTAL',0,-78);ctx.restore()}\n${drawMarker}`;
