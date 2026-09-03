@@ -8,37 +8,43 @@
  const marker="const W=()=>cv.width/DPR,H=()=>cv.height/DPR;const img={};";
  const loader=`${marker}
 async function loadStaticMap(){
- const parts=await Promise.all(Array.from({length:10},async(_,i)=>{const n=String(i).padStart(2,'0'),r=await fetch(\`assets/maps/stabilizer-nexus-map-\${n}.b64?v=staticmap1\`);if(!r.ok)throw new Error(\`Map \${n}: \${r.status}\`);return(await r.text()).trim()}));
+ const parts=await Promise.all(Array.from({length:10},async(_,i)=>{const n=String(i).padStart(2,'0'),r=await fetch(`assets/maps/stabilizer-nexus-map-${n}.b64?v=staticmap1`);if(!r.ok)throw new Error(`Map ${n}: ${r.status}`);return(await r.text()).trim()}));
  const b64=parts.join(''),bin=atob(b64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
- const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage=\`linear-gradient(rgba(1,10,13,.08),rgba(1,10,13,.08)),url("\${url}")\`;window.__STABI_MAP_READY__=true
+ const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage=`linear-gradient(rgba(1,10,13,.08),rgba(1,10,13,.08)),url("${url}")`;window.__STABI_MAP_READY__=true
 }
 loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
  if(!h.includes(marker))throw new Error('Map marker');h=h.replace(marker,loader);
  const oldBg="function bg(){ctx.fillStyle='#08292a';ctx.fillRect(0,0,W(),H());ctx.strokeStyle='#143e40';ctx.lineWidth=1;for(let x=0;x<W();x+=52){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H());ctx.stroke()}for(let y=0;y<H();y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W(),y);ctx.stroke()}}";
  if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}");
+
  const imageLoaderMarker="function loadImage(path){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Asset gagal: '+path));im.src=path})}";
  const bossAtlasLoader=`${imageLoaderMarker}
 async function loadMevBossAtlas(){
- let b64='';for(let i=0;i<8;i++){const n=String(i).padStart(2,'0'),r=await fetch(\`assets/atlases/mev-boss-lvl15-atlas-\${n}.b64?v=20260903boss15final\`);if(!r.ok)throw new Error(\`MEV Boss atlas \${n}: \${r.status}\`);b64+=(await r.text()).replace(/\\s+/g,'')}
+ let b64='';for(let i=0;i<3;i++){const n=String(i).padStart(2,'0'),r=await fetch(`assets/atlases/mev-boss-lvl15-final-${n}.b64?v=20260903boss15final2`);if(!r.ok)throw new Error(`MEV Boss atlas ${n}: ${r.status}`);b64+=(await r.text()).replace(/\s+/g,'')}
  const bin=atob(b64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
  const url=URL.createObjectURL(new Blob([bytes],{type:'image/avif'}));return await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('MEV Boss atlas decode failed'));im.src=url})
 }`;
  if(!h.includes(imageLoaderMarker))throw new Error('Boss loader marker');h=h.replace(imageLoaderMarker,bossAtlasLoader);
+
  const oldAssetBlock="const paths={enemy:'assets/atlases/red-slime-atlas.webp',boss:'assets/atlases/mech-boss-atlas.webp',coin:'assets/coin.webp',hpdrop:'assets/drops/hp-crystal.png',ethdrop:'assets/drops/eth-coin.png',ultfx:'assets/effects/ultimate-ring.png'};\n await Promise.all(Object.entries(paths).map(async([name,path])=>{img[name]=await loadImage(path)}))";
  const newAssetBlock="const paths={enemy:'assets/atlases/red-slime-atlas.webp',coin:'assets/coin.webp',hpdrop:'assets/drops/hp-crystal.png',ethdrop:'assets/drops/eth-coin.png',ultfx:'assets/effects/ultimate-ring.png'};\n await Promise.all(Object.entries(paths).map(async([name,path])=>{img[name]=await loadImage(path)}));img.boss=await loadMevBossAtlas()";
  if(!h.includes(oldAssetBlock))throw new Error('Boss asset marker');h=h.replace(oldAssetBlock,newAssetBlock);
+
  const oldSpawn="function announce(text){$('wave').textContent=text;setTimeout(()=>{if(run&&$('wave').textContent===text)$('wave').textContent=''},1700)}function spawnBossWave(stage){if(bosses.length)return;bossStage=stage;const y=-110;if(stage===1){bossWaveMax=480;bosses=[bossObj(W()/2,y,480,49,1,false)];$('bossname').textContent='MEV BOT';announce('LEVEL 5 • MEV WAVE')}else if(stage===2){bossWaveMax=1040;bosses=[bossObj(W()*.35,y,520,50,1,false),bossObj(W()*.65,y-35,520,50,1,false)];$('bossname').textContent='MEV BOT ×2';announce('LEVEL 10 • DOUBLE MEV')}else{bossWaveMax=900;finalSpawned=true;bosses=[bossObj(W()/2,y,900,52,1.22,true)];$('bossname').textContent='FINAL MEV BOSS';announce('LEVEL 15 • FINAL MEV BOSS')}$('bossbar').style.display='block'}function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=5&&bossStage<1)spawnBossWave(1);else if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=15&&bossStage<3)spawnBossWave(3)}";
  const newSpawn="function announce(text){$('wave').textContent=text;setTimeout(()=>{if(run&&$('wave').textContent===text)$('wave').textContent=''},1700)}function spawnBossWave(stage){if(bosses.length||stage!==3)return;bossStage=3;const y=-110;bossWaveMax=900;finalSpawned=true;bosses=[bossObj(W()/2,y,900,52,1.55,true)];$('bossname').textContent='MEV BOSS';announce('LEVEL 15 • MEV BOSS');$('bossbar').style.display='block'}function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=15&&bossStage<3)spawnBossWave(3)}";
  if(!h.includes(oldSpawn))throw new Error('Boss spawn marker');h=h.replace(oldSpawn,newSpawn);
+
  const oldBossDraw="if(isBoss){const im=img.boss;if(!im)return;const cs=20;let row=1,frames=8;if(m.dead>0){row=4;frames=6}else if(m.hurt>0){row=3;frames=4}else if(m.atk>0){row=2;frames=6}let fr=Math.floor(m.anim)%frames;if(m.dead>0)fr=Math.min(frames-1,Math.floor((.9-m.dead)/.9*frames));const sz=120*(m.scale||1);ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=m.hurt>0?.7:1;if(m.flip){ctx.translate(m.x+sz/2,0);ctx.scale(-1,1);ctx.drawImage(im,fr*cs,row*cs,cs,cs,0,m.y-sz/2,sz,sz)}else ctx.drawImage(im,fr*cs,row*cs,cs,cs,m.x-sz/2,m.y-sz/2,sz,sz);ctx.restore();return}";
- const newBossDraw="if(isBoss){const im=img.boss;if(!im)return;const cs=128;let row=0,frames=8,fr=Math.floor(m.anim)%8;if(m.dead>0){row=3;frames=6;fr=Math.min(frames-1,Math.floor((.9-m.dead)/.9*frames))}else if(m.hurt>0){row=2;frames=4;fr=Math.min(frames-1,Math.floor((.18-m.hurt)/.18*frames))}else if(m.atk>0){row=1;frames=8;fr=Math.min(frames-1,Math.floor((.3-m.atk)/.3*frames))}const sz=124*(m.scale||1);ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=m.hurt>0?.7:1;if(m.flip){ctx.translate(m.x+sz/2,0);ctx.scale(-1,1);ctx.drawImage(im,fr*cs,row*cs,cs,cs,0,m.y-sz/2,sz,sz)}else ctx.drawImage(im,fr*cs,row*cs,cs,cs,m.x-sz/2,m.y-sz/2,sz,sz);ctx.restore();return}";
+ const newBossDraw="if(isBoss){const im=img.boss;if(!im)return;const cs=192;let row=0,frames=8,fr=Math.floor(m.anim)%8;if(m.dead>0){row=3;frames=6;fr=Math.min(frames-1,Math.floor((.9-m.dead)/.9*frames))}else if(m.hurt>0){row=2;frames=4;fr=Math.min(frames-1,Math.floor((.18-m.hurt)/.18*frames))}else if(m.atk>0){row=1;frames=8;fr=Math.min(frames-1,Math.floor((.3-m.atk)/.3*frames))}const sz=124*(m.scale||1);ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=m.hurt>0?.7:1;if(m.flip){ctx.translate(m.x+sz/2,0);ctx.scale(-1,1);ctx.drawImage(im,fr*cs,row*cs,cs,cs,0,m.y-sz/2,sz,sz)}else ctx.drawImage(im,fr*cs,row*cs,cs,cs,m.x-sz/2,m.y-sz/2,sz,sz);ctx.restore();return}";
  if(!h.includes(oldBossDraw))throw new Error('Boss draw marker');h=h.replace(oldBossDraw,newBossDraw);
+
  const oldUltUse="p.ult=0;p.ultT=1.05;p.inv=Math.max(p.inv,1.1);";
  const newUltUse="p.ult=0;p.ultT=.65;p.inv=Math.max(p.inv,1.1);";
  if(!h.includes(oldUltUse))throw new Error('Ultimate timing marker');h=h.replace(oldUltUse,newUltUse);
  const oldUltDraw="function slash(){if(p.ultT>0){const a=Math.max(0,p.ultT/1.05),q=1-a,e=Math.sin(Math.min(1,q*1.35)*Math.PI/2),size=260+e*440;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';if(img.ultfx){ctx.globalAlpha=Math.min(1,.98*a+0.22);ctx.rotate(q*.38);ctx.drawImage(img.ultfx,-size/2,-size/2,size,size);const echo=size*1.22;ctx.globalAlpha=Math.max(.22,a*.58);ctx.rotate(-q*.78);ctx.drawImage(img.ultfx,-echo/2,-echo/2,echo,echo)}ctx.rotate(q*.22);ctx.scale(1,.58);ctx.globalAlpha=Math.min(1,.55+a*.55);ctx.shadowColor='#42fff1';ctx.shadowBlur=30;ctx.strokeStyle='#bafffa';ctx.lineWidth=12;ctx.beginPath();ctx.arc(0,0,size*.43,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=Math.max(.2,a*.42);ctx.shadowBlur=48;ctx.strokeStyle='#27e9df';ctx.lineWidth=30;ctx.beginPath();ctx.arc(0,0,size*.43,0,Math.PI*2);ctx.stroke();ctx.restore()}}";
  const newUltDraw="function slash(){if(p.ultT>0){const a=Math.max(0,p.ultT/.65),q=1-a,e=Math.sin(Math.min(1,q*1.5)*Math.PI/2),size=220+e*260;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';if(img.ultfx){ctx.globalAlpha=.42+.42*a;ctx.rotate(q*.2);ctx.drawImage(img.ultfx,-size/2,-size/2,size,size)}ctx.globalAlpha=.38+.35*a;ctx.strokeStyle='#9ffff8';ctx.lineWidth=8;ctx.beginPath();ctx.arc(0,0,size*.38,0,Math.PI*2);ctx.stroke();ctx.restore()}}";
  if(!h.includes(oldUltDraw))throw new Error('Ultimate draw marker');h=h.replace(oldUltDraw,newUltDraw);
+
  const stateMarker="const keys={up:0,down:0,left:0,right:0};let run=false,last=0,t=0,spawn=0,en=[],bosses=[],drops=[],slashes=[],floatNums=[],bossStage=0,finalSpawned=false,bossWaveMax=0;";
  if(!h.includes(stateMarker))throw new Error('Portal state marker');h=h.replace(stateMarker,stateMarker+"let portalActive=false,portal={x:0,y:0,r:58,pulse:0};");
  const resetMarker="function reset(){t=spawn=0;en=[];bosses=[];drops=[];slashes=[];floatNums=[];bossStage=0;finalSpawned=false;bossWaveMax=0;";
@@ -53,6 +59,7 @@ async function loadMevBossAtlas(){
  if(!h.includes(drawMarker))throw new Error('Portal draw marker');h=h.replace(drawMarker,portalDraw.replace(drawMarker,"function draw(){ctx.setTransform(DPR,0,0,DPR,0,0);bg();drawPortal();drops.forEach(drawDrop);en.forEach(m=>mob(m,false));bosses.forEach(m=>mob(m,true));hero();slash();drawFloats()}"));
  const victoryMarker="Level 15 cleared<br>Final MEV Boss defeated<br>KO: ${p.kills}";
  if(h.includes(victoryMarker))h=h.replace(victoryMarker,"Level 15 cleared<br>Final MEV Boss defeated<br>Portal entered<br>KO: ${p.kills}");
+
  document.open();document.write(h);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
