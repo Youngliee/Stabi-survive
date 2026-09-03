@@ -1,11 +1,11 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-fixed-base.html?v=20260903mapclean1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
+ const r=await fetch('play-fixed-base.html?v=20260903mapdataurl1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
  const b64Needle="const b64=parts.join(''),bin=atob(b64),bytes=new Uint8Array(bin.length);";
- const b64Insert="const raw=parts.join('').replace(/[^A-Za-z0-9+/]/g,''),b64=raw+'='.repeat((4-raw.length%4)%4);window.__STABI_MAP_RAW_LEN__=raw.length;const bin=atob(b64),bytes=new Uint8Array(bin.length);";
+ const b64Insert="const raw=parts.join('').replace(/[^A-Za-z0-9+/]/g,''),b64=raw+'='.repeat((4-raw.length%4)%4),url='data:image/webp;base64,'+b64;window.__STABI_MAP_RAW_LEN__=raw.length;";
  if(!s.includes(b64Needle))throw new Error('Map base64 patch marker');s=s.replace(b64Needle,b64Insert);
  const mapNeedle="const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage=";
- const mapInsert="const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));img.map=await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Map decode failed'));im.src=url});document.body.style.backgroundImage=";
+ const mapInsert="img.map=await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Map decode failed'));im.src=url});document.body.style.backgroundImage=";
  if(!s.includes(mapNeedle))throw new Error('Map loader patch marker');s=s.replace(mapNeedle,mapInsert);
  const catchNeedle="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
  const catchInsert="loadStaticMap().catch(e=>{window.__STABI_MAP_READY__=false;window.__STABI_MAP_ERROR__=String(e&&e.message||e);const n=document.createElement('div');n.textContent='MAP ERROR: '+window.__STABI_MAP_ERROR__+' | LEN '+(window.__STABI_MAP_RAW_LEN__||'?');n.style.cssText='position:fixed;left:8px;bottom:8px;z-index:9999;background:#420;color:#fff;padding:6px 8px;border-radius:6px;font:11px monospace';document.body.appendChild(n)});";
