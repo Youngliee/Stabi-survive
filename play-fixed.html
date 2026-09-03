@@ -1,18 +1,10 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-fixed-base.html?v=20260903mapdataurl1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
- const b64Needle="const b64=parts.join(''),bin=atob(b64),bytes=new Uint8Array(bin.length);";
- const b64Insert="const raw=parts.join('').replace(/[^A-Za-z0-9+/]/g,''),b64=raw+'='.repeat((4-raw.length%4)%4),url='data:image/webp;base64,'+b64;window.__STABI_MAP_RAW_LEN__=raw.length;";
- if(!s.includes(b64Needle))throw new Error('Map base64 patch marker');s=s.replace(b64Needle,b64Insert);
- const mapNeedle="const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));document.body.style.backgroundImage=";
- const mapInsert="img.map=await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Map decode failed'));im.src=url});document.body.style.backgroundImage=";
- if(!s.includes(mapNeedle))throw new Error('Map loader patch marker');s=s.replace(mapNeedle,mapInsert);
- const catchNeedle="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
- const catchInsert="loadStaticMap().catch(e=>{window.__STABI_MAP_READY__=false;window.__STABI_MAP_ERROR__=String(e&&e.message||e);const n=document.createElement('div');n.textContent='MAP ERROR: '+window.__STABI_MAP_ERROR__+' | LEN '+(window.__STABI_MAP_RAW_LEN__||'?');n.style.cssText='position:fixed;left:8px;bottom:8px;z-index:9999;background:#420;color:#fff;padding:6px 8px;border-radius:6px;font:11px monospace';document.body.appendChild(n)});";
- if(s.includes(catchNeedle))s=s.replace(catchNeedle,catchInsert);
- const bgNeedle=`h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")`;
- const bgInsert=`h=h.replace(oldBg,"function bg(){const w=W(),h=H();ctx.clearRect(0,0,w,h);if(img.map){const iw=img.map.naturalWidth||img.map.width,ih=img.map.naturalHeight||img.map.height,k=Math.max(w/iw,h/ih),dw=iw*k,dh=ih*k;ctx.drawImage(img.map,(w-dw)/2,(h-dh)/2,dw,dh);ctx.fillStyle='rgba(1,10,13,.08)';ctx.fillRect(0,0,w,h)}else{ctx.fillStyle='#061718';ctx.fillRect(0,0,w,h)}}")`;
- if(!s.includes(bgNeedle))throw new Error('Map draw patch marker');s=s.replace(bgNeedle,bgInsert);
+ const r=await fetch('play-fixed-base.html?v=20260904nomap1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
+ const bgPatch='h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")';
+ if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');
+ const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
+ if(s.includes(mapRun))s=s.replace(mapRun,"window.__STABI_MAP_READY__=false;");
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
