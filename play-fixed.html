@@ -10,7 +10,7 @@
  if(!s.includes(finalBossAtlasOld))throw new Error('Final boss atlas marker');s=s.replaceAll(finalBossAtlasOld,'assets/atlases/mev-boss-lvl15-atlas-');
  if(s.includes('?v=20260903boss15final2'))s=s.replaceAll('?v=20260903boss15final2','?v=20260903boss15a');
  const finalBossCellOld='const cs=192;let row=0,frames=8';
- if(!s.includes(finalBossCellOld))throw new Error('Final boss cell marker');s=s.replace(finalBossCellOld,'const cs=48;let row=0,frames=8');
+ if(!s.includes(finalBossCellOld))throw new Error('Final boss cell marker');s=s.replace(finalBossCellOld,"const cs=Math.floor(Math.min((im.naturalWidth||im.width)/8,(im.naturalHeight||im.height)/4));let row=0,frames=8");
  const bossLoaderNeedle='async function loadMevBossAtlas(){';
  const bossLoaderInsert="async function loadUltimateFx(){const r=await fetch('assets/effects/ultimate-user-v4.b64?v=9dd0814');if(!r.ok)throw new Error('Ultimate FX '+r.status);const raw=(await r.text()).replace(/[^A-Za-z0-9+/]/g,''),b64=raw+'='.repeat((4-raw.length%4)%4),url='data:image/webp;base64,'+b64;return await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Ultimate FX decode failed'));im.src=url})}\nasync function loadMevBossAtlas(){";
  if(!s.includes(bossLoaderNeedle))throw new Error('Ultimate loader marker');s=s.replace(bossLoaderNeedle,bossLoaderInsert);
