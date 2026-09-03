@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-fixed-base.html?v=20260904ultimate1');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
+ const r=await fetch('play-fixed-base.html?v=20260904ultimate2');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
  const bgPatch='h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")';
  if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');
  const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
@@ -9,7 +9,6 @@
  const bossLoaderNeedle='async function loadMevBossAtlas(){';
  const bossLoaderInsert="async function loadUltimateFx(){const r=await fetch('assets/effects/ultimate-user.b64?v=e632798');if(!r.ok)throw new Error('Ultimate FX '+r.status);let b64=(await r.text()).replace(/\\s+/g,'');while(b64.length%4)b64+='=';const bin=atob(b64),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));return await new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>no(new Error('Ultimate FX decode failed'));im.src=url})}\nasync function loadMevBossAtlas(){";
  if(!s.includes(bossLoaderNeedle))throw new Error('Ultimate loader marker');s=s.replace(bossLoaderNeedle,bossLoaderInsert);
- s=s.replace("ultfx:'assets/effects/ultimate-ring.png'",'');
  const bossAssetNeedle='img.bossFinal=await loadMevBossAtlas()';if(!s.includes(bossAssetNeedle))throw new Error('Ultimate asset marker');s=s.replace(bossAssetNeedle,bossAssetNeedle+';img.ultfx=await loadUltimateFx()');
  const ultRe=/const newUltDraw="function slash\(\)\{if\(p\.ultT>0\)\{.*?\}\}";/;
  const ultNew=`const newUltDraw="function slash(){if(p.ultT>0&&img.ultfx){const q=1-Math.max(0,p.ultT/.65),fr=Math.min(7,Math.floor(q*8)),sx=(fr%4)*96,sy=Math.floor(fr/4)*96,sz=170;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.92;ctx.drawImage(img.ultfx,sx,sy,96,96,-sz/2,-sz/2,sz,sz);ctx.restore()}}";`;
