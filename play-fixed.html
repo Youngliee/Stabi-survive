@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-fixed-base.html?v=20260904ultimate3');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
+ const r=await fetch('play-fixed-base.html?v=20260904-mev-dash-ultimate3');if(!r.ok)throw new Error('Base '+r.status);let s=await r.text();
  const bgPatch='h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")';
  if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');
  const mapRun="loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
