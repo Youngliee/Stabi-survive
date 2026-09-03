@@ -13,6 +13,10 @@
  const ultRe=/const newUltDraw="function slash\(\)\{if\(p\.ultT>0\)\{.*?\}\}";/;
  const ultNew=`const newUltDraw="function slash(){if(p.ultT>0&&img.ultfx){const q=1-Math.max(0,p.ultT/.65),fr=Math.min(7,Math.floor(q*8)),fw=(img.ultfx.naturalWidth||img.ultfx.width)/4,fh=(img.ultfx.naturalHeight||img.ultfx.height)/2,sx=(fr%4)*fw,sy=Math.floor(fr/4)*fh,fxW=280,fxH=170;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.92;ctx.drawImage(img.ultfx,sx,sy,fw,fh,-fxW/2,-fxH/2,fxW,fxH);ctx.restore()}}";`;
  if(!ultRe.test(s))throw new Error('Ultimate draw marker');s=s.replace(ultRe,ultNew);
+ const spawnPos=s.indexOf('const newSpawn=');
+ const waveOld="function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=5&&bossStage<1)spawnBossWave(1);else if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=15&&bossStage<3)spawnBossWave(3)}";
+ const waveSafe="function maybeBossWave(){if(bosses.some(b=>b.hp>0||b.dead>0))return;const lv=level();if(lv>=15&&!finalSpawned){spawnBossWave(3);return}if(lv>=10&&bossStage<2)spawnBossWave(2);else if(lv>=5&&bossStage<1)spawnBossWave(1)}";
+ if(spawnPos<0)throw new Error('Final boss spawn marker');let tail=s.slice(spawnPos);if(!tail.includes(waveOld))throw new Error('Final boss wave marker');tail=tail.replace(waveOld,waveSafe);s=s.slice(0,spawnPos)+tail;
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
 </script></body></html>
