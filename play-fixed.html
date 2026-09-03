@@ -11,7 +11,7 @@
  if(!s.includes(bossLoaderNeedle))throw new Error('Ultimate loader marker');s=s.replace(bossLoaderNeedle,bossLoaderInsert);
  const bossAssetNeedle='img.bossFinal=await loadMevBossAtlas()';if(!s.includes(bossAssetNeedle))throw new Error('Ultimate asset marker');s=s.replace(bossAssetNeedle,bossAssetNeedle+';img.ultfx=await loadUltimateFx()');
  const ultRe=/const newUltDraw="function slash\(\)\{if\(p\.ultT>0\)\{.*?\}\}";/;
- const ultNew=`const newUltDraw="function slash(){if(p.ultT>0&&img.ultfx){const q=1-Math.max(0,p.ultT/.65),fr=Math.min(7,Math.floor(q*8)),fw=(img.ultfx.naturalWidth||img.ultfx.width)/4,fh=(img.ultfx.naturalHeight||img.ultfx.height)/2,sx=(fr%4)*fw,sy=Math.floor(fr/4)*fh,sz=170;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.92;ctx.drawImage(img.ultfx,sx,sy,fw,fh,-sz/2,-sz/2,sz,sz);ctx.restore()}}";`;
+ const ultNew=`const newUltDraw="function slash(){if(p.ultT>0&&img.ultfx){const q=1-Math.max(0,p.ultT/.65),fr=Math.min(7,Math.floor(q*8)),fw=(img.ultfx.naturalWidth||img.ultfx.width)/4,fh=(img.ultfx.naturalHeight||img.ultfx.height)/2,sx=(fr%4)*fw,sy=Math.floor(fr/4)*fh,fxW=280,fxH=170;ctx.save();ctx.translate(p.x,p.y);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.92;ctx.drawImage(img.ultfx,sx,sy,fw,fh,-fxW/2,-fxH/2,fxW,fxH);ctx.restore()}}";`;
  if(!ultRe.test(s))throw new Error('Ultimate draw marker');s=s.replace(ultRe,ultNew);
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">Asset error: '+e.message+'</pre>'}})();
