@@ -10,6 +10,33 @@
 }
 loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
  src=src.replace(re,repl);
+ const bgm=`<script>
+(()=>{
+ const AC=window.AudioContext||window.webkitAudioContext;
+ let ctx=null,master=null,drone=null,timer=null,started=false,step=0;
+ const melody=[220,261.63,329.63,392,329.63,261.63,196,246.94,293.66,349.23,440,349.23,293.66,246.94,196,164.81];
+ const bass=[110,98,123.47,82.41];
+ function note(freq,type='square',gain=.12,len=.22){
+  if(!ctx||ctx.state!=='running')return;
+  const now=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,now);
+  g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(gain,now+.018);g.gain.exponentialRampToValueAtTime(.0001,now+len);
+  o.connect(g).connect(master);o.start(now);o.stop(now+len+.03)
+ }
+ function tick(){if(!ctx||ctx.state!=='running')return;note(melody[step%melody.length],'square',.11,.19);if(step%4===0)note(bass[(step/4)%bass.length|0],'triangle',.12,.5);step++}
+ function startBgm(){
+  if(!AC)return;
+  if(!ctx){ctx=new AC();master=ctx.createGain();master.gain.value=.28;master.connect(ctx.destination);drone=ctx.createOscillator();const dg=ctx.createGain();drone.type='triangle';drone.frequency.value=55;dg.gain.value=.022;drone.connect(dg).connect(master);drone.start()}
+  const p=ctx.resume();if(p&&p.catch)p.catch(()=>{});
+  if(started)return;started=true;tick();timer=setInterval(tick,315);window.__STABI_BGM_STARTED__=true
+ }
+ ['pointerdown','touchstart','mousedown','keydown'].forEach(ev=>document.addEventListener(ev,startBgm,{passive:true,capture:true}));
+ window.addEventListener('pointerdown',startBgm,{passive:true,capture:true});
+ document.addEventListener('visibilitychange',()=>{if(!ctx)return;if(document.hidden)ctx.suspend();else if(started)ctx.resume().catch(()=>{})});
+ window.__STABI_START_BGM__=startBgm;
+})();
+<\/script>`;
+ src=src.replace('</body>',bgm+'</body>');
  document.open();document.write(src);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">HD BG runtime error: '+e.message+'</pre>'}})();
 </script></body></html>
