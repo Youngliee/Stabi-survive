@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive HD BG Runtime</title></head><body style="margin:0;background:#061718"><script>
+(async()=>{try{
+ const r=await fetch('play-fixed-base.html?v=20260904-hdbg2');if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const re=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
+ if(!re.test(src))throw new Error('Map loader marker');
+ const repl=`async function loadStaticMap(){
+ const r=await fetch('assets/maps/nexus-hd-test.b64?v=hdarena2');if(!r.ok)throw new Error('HD BG '+r.status);
+ const raw=(await r.text()).replace(/[^A-Za-z0-9+/=]/g,''),url='data:image/webp;base64,'+raw;
+ document.body.style.backgroundImage='url("'+url+'")';document.body.style.backgroundSize='cover';document.body.style.backgroundPosition='center';document.body.style.backgroundRepeat='no-repeat';document.body.style.backgroundColor='#061718';window.__STABI_MAP_READY__=true
+}
+loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
+ src=src.replace(re,repl);
+ document.open();document.write(src);document.close();
+}catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">HD BG runtime error: '+e.message+'</pre>'}})();
+</script></body></html>
