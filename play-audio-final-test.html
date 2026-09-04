@@ -1,12 +1,15 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Final Audio Test</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- const r=await fetch('play-game-shell.html?v=20260905-share-rootfix1');if(!r.ok)throw new Error('Shell '+r.status);let s=await r.text();
+ const r=await fetch('play-game-shell.html?v=20260905-sharebutton1');if(!r.ok)throw new Error('Shell '+r.status);let s=await r.text();
  const re=/src="play-fixed\.html\?v=[^"]+"/;if(!re.test(s))throw new Error('Game route marker');
  s=s.replace(re,'src="play-audio-final-runtime2.html?v=20260905-mobilefix1"');
  const shareRe=/function bindShare\(d\)\{[\s\S]*?\}function install\(\)/;
  if(!shareRe.test(s))throw new Error('Share handler marker');
- const shareFn="function bindShare(d){const sx=d.getElementById('sharex');if(!sx||sx.dataset.bound==='1')return;sx.dataset.bound='1';sx.style.pointerEvents='auto';sx.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const ko=d.getElementById('killv')?.textContent||'0',usdz=d.getElementById('coinv')?.textContent||'0',eth=d.getElementById('ethv')?.textContent||'0',sec=d.getElementById('timev')?.textContent||'0';const text='I cleared Level 15 in Stabi Survive and defeated the Final MEV Boss! ⚔️\\n\\nKO: '+ko+' | USDZ: '+usdz+' | ETH: '+eth+' | '+sec+'s\\n\\nCan you survive to Level 15?\\n#StabiSurvive #Stabilizer';const gameUrl='https://youngliee.github.io/Stabi-survive/play.html';const share='https://x.com/intent/post?text='+encodeURIComponent(text+'\\n\\n'+gameUrl);window.top.location.href=share},{passive:false})}function install()";
+ const shareFn="function bindShare(d){const sx=d.getElementById('sharex');if(!sx||sx.dataset.bound==='1')return;sx.dataset.bound='1';sx.style.pointerEvents='auto';sx.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const ko=d.getElementById('killv')?.textContent||'0',usdz=d.getElementById('coinv')?.textContent||'0',eth=d.getElementById('ethv')?.textContent||'0',sec=d.getElementById('timev')?.textContent||'0';const text='I cleared Level 15 in Stabi Survive and defeated the Final MEV Boss! ⚔️\\n\\nKO: '+ko+' | USDZ: '+usdz+' | ETH: '+eth+' | '+sec+'s\\n\\nCan you survive to Level 15?\\n#StabiSurvive #Stabilizer';const gameUrl='https://youngliee.github.io/Stabi-survive/play.html';const share='https://x.com/intent/post?text='+encodeURIComponent(text+'\\n\\n'+gameUrl);window.top.location.href=share},{passive:false})}function ensureShareButton(d){const win=d.getElementById('win');if(!win||d.getElementById('sharex'))return;const again=d.getElementById('winagain');if(!again)return;const b=d.createElement('button');b.id='sharex';b.className='btn';b.textContent='SHARE ON X';b.style.marginTop='8px';b.style.background='#0b0f10';b.style.color='#fff';b.style.border='1px solid #63ddd5';again.insertAdjacentElement('afterend',b)}function install()";
  s=s.replace(shareRe,shareFn);
+ const installMark="const d=f.contentDocument;if(!d)return;";
+ if(!s.includes(installMark))throw new Error('Install marker');
+ s=s.replace(installMark,installMark+"ensureShareButton(d);");
  document.open();document.write(s);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace;white-space:pre-wrap">FINAL AUDIO TEST ERROR: '+e.message+'</pre>'}})();
 </script></body></html>
