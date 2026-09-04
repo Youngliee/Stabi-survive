@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive HD BG Canvas Test</title></head><body style="margin:0;background:#061718"><script>
+(async()=>{try{
+ const r=await fetch('play-fixed-base.html?v=20260904-hdbg3');if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const old='h=h.replace(oldBg,"function bg(){ctx.clearRect(0,0,W(),H())}")';
+ if(!src.includes(old))throw new Error('BG replacement marker');
+ const draw="h=h.replace(oldBg,\"let __arenaBg=new Image(),__arenaReady=false;__arenaBg.onload=()=>{__arenaReady=true};(async()=>{try{const r=await fetch('assets/maps/nexus-hd-test.b64?v=hdarena3');if(!r.ok)throw new Error('HD BG '+r.status);const raw=(await r.text()).replace(/[^A-Za-z0-9+/=]/g,'');__arenaBg.src='data:image/webp;base64,'+raw}catch(e){console.warn(e)}})();function bg(){ctx.clearRect(0,0,W(),H());if(__arenaReady&&__arenaBg.width&&__arenaBg.height){const sc=Math.max(W()/__arenaBg.width,H()/__arenaBg.height),dw=__arenaBg.width*sc,dh=__arenaBg.height*sc;ctx.save();ctx.imageSmoothingEnabled=true;ctx.drawImage(__arenaBg,(W()-dw)/2,(H()-dh)/2,dw,dh);ctx.restore()}else{ctx.fillStyle='#061718';ctx.fillRect(0,0,W(),H())}}\")";
+ src=src.replace(old,draw);
+ src=src.replace("loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});","window.__STABI_MAP_READY__=false;");
+ document.open();document.write(src);document.close();
+}catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace">HD BG canvas test error: '+e.message+'</pre>'}})();
+</script></body></html>
