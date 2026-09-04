@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus BG V2</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#061718;color:#fff}</style></head><body><script>
+(async()=>{try{
+ const [runtimeRes,bgRes]=await Promise.all([
+  fetch('play-fixed.html?v=20260904-bg-v2'),
+  fetch('play-bg-nexus-test-fixed.html?v=20260904-bg-source')
+ ]);
+ if(!runtimeRes.ok)throw new Error('Runtime '+runtimeRes.status);
+ if(!bgRes.ok)throw new Error('BG source '+bgRes.status);
+ let src=await runtimeRes.text();
+ const bgSource=await bgRes.text();
+ const match=bgSource.match(/const bg='(data:image\/webp;base64,[^']+)'/);
+ if(!match)throw new Error('Nexus background data not found');
+ const bg=match[1];
+
+ // Keep the base runtime's transparent-canvas background patch active.
+ const rollback="if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');s=s.replace(bgPatch,'h=h.replace(oldBg,oldBg)');";
+ if(!src.includes(rollback))throw new Error('BG rollback marker');
+ src=src.replace(rollback,"if(!s.includes(bgPatch))throw new Error('Pre-map BG marker');");
+
+ // Inject the portrait Nexus image into the actual game HTML (h) immediately
+ // before the base runtime document.write(h), not into the outer wrapper.
+ const outerWrite="document.open();document.write(s);document.close();";
+ if(!src.includes(outerWrite))throw new Error('Outer write marker');
+ const coreWrite="document.open();document.write(h);document.close();";
+ const style='<style>html,body{background-image:url('+bg+')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;background-color:#061718!important}canvas{background:transparent!important}</style>';
+ const bgCode="if(!h.includes('</head>'))throw new Error('Core head marker');h=h.replace('</head>',"+JSON.stringify(style+"</head>")+");";
+ const outerPatch="const __coreWrite="+JSON.stringify(coreWrite)+";if(!s.includes(__coreWrite))throw new Error('Core write marker');s=s.replace(__coreWrite,"+JSON.stringify(bgCode+"\n")+"+__coreWrite);document.open();document.write(s);document.close();";
+ src=src.replace(outerWrite,outerPatch);
+ document.open();document.write(src);document.close();
+}catch(e){document.body.innerHTML='<pre style="white-space:pre-wrap;color:#fff;padding:18px;font:14px monospace">BG V2 error: '+String(e&&e.message||e)+'</pre>'}})();
+</script></body></html>
