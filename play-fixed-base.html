@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive</title></head><body style="margin:0;background:#061718"><script>
 (async()=>{try{
- let r=await fetch('assets/runtime/play-fixed-core-staticmap1.html?v=staticmap1-mev-dash-boss15exact1');if(!r.ok)throw new Error('Core '+r.status);let h=await r.text();
+ let r=await fetch('assets/runtime/play-fixed-core-staticmap1.html?v=staticmap1-mev-dash-boss15exact2');if(!r.ok)throw new Error('Core '+r.status);let h=await r.text();
  const oldCss="*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#061718;color:#fff;font-family:Arial,sans-serif}canvas{display:block;width:100vw;height:100vh;touch-action:none;image-rendering:pixelated}";
  const newCss="*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#061718;color:#fff;font-family:Arial,sans-serif}body{background-position:center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed}canvas{display:block;width:100vw;height:100vh;touch-action:none;image-rendering:pixelated;background:transparent}";
  if(!h.includes(oldCss))throw new Error('CSS marker');h=h.replace(oldCss,newCss);
@@ -28,7 +28,7 @@ async function loadMevBossAtlas(){
  const extraSpriteMarker="async function loadFullAssets(){";
  const extraSprites=`const mevSpriteSet={idle:null,walk:null,attack:null,hurt:null,death:null};
 async function loadMevSprite(path,frames){
- const source=await loadImage(path+'?v=mev-png2'),surface=document.createElement('canvas');surface.width=source.naturalWidth;surface.height=source.naturalHeight;
+ const source=await loadImage(path+'?v=mev-png3'),surface=document.createElement('canvas');surface.width=source.naturalWidth;surface.height=source.naturalHeight;
  const painter=surface.getContext('2d',{willReadFrequently:true});painter.drawImage(source,0,0);return{image:surface,frames,boxes:spriteFrameBoxes(surface,frames)}
 }
 async function loadMevSprites(){const defs={idle:['assets/mev/idle.png',4],walk:['assets/mev/walk.png',8],attack:['assets/mev/attack.png',7],hurt:['assets/mev/hurt.png',4],death:['assets/mev/death.png',5]};await Promise.all(Object.entries(defs).map(async([state,[path,frames]])=>{mevSpriteSet[state]=await loadMevSprite(path,frames)}))}
