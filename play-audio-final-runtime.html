@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Final Audio Runtime</title></head><body style="margin:0;background:#061718"><script>
+(async()=>{try{
+ const r=await fetch('play-fixed-base.html?v=20260905-audio-final-base1');if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const mapRe=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
+ if(!mapRe.test(src))throw new Error('Map loader marker');
+ const mapRepl=`async function loadStaticMap(){
+ const r=await fetch('assets/maps/nexus-hd-test.b64?v=hdarena2');if(!r.ok)throw new Error('HD BG '+r.status);
+ const raw=(await r.text()).replace(/[^A-Za-z0-9+/=]/g,''),url='data:image/webp;base64,'+raw;
+ document.body.style.backgroundImage='url("'+url+'")';document.body.style.backgroundSize='cover';document.body.style.backgroundPosition='center';document.body.style.backgroundRepeat='no-repeat';document.body.style.backgroundColor='#061718';window.__STABI_MAP_READY__=true
+}
+loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
+ src=src.replace(mapRe,mapRepl);
+ const writeMarker="document.open();document.write(h);document.close();";
+ if(!src.includes(writeMarker))throw new Error('Final renderer marker');
+ const patch=`
+ const audioHtml=\`<style>
+ #stabiAudioCtl{position:fixed;z-index:70;right:8px;top:132px;display:flex;gap:5px;pointer-events:auto}
+ #stabiAudioCtl button{width:42px;height:34px;border:1px solid rgba(101,241,212,.42);border-radius:11px;background:rgba(2,18,18,.88);color:#fff;font:900 12px Arial;backdrop-filter:blur(7px);touch-action:manipulation}
+ #stabiAudioCtl button.off{opacity:.5}
+ @media(min-width:900px) and (pointer:fine){#stabiAudioCtl{top:118px;right:10px}}
+ </style>
+ <div id="stabiAudioCtl"><button id="stabiBgmBtn" title="BGM">🎵</button><button id="stabiSfxBtn" title="SFX">🔊</button></div>
+ <script>
+ (()=>{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  let ac=null,bgmBus=null,sfxBus=null,bgmStarted=false,bgmOn=true,sfxOn=true,next=0,step=0,timer=null;
+  const bpm=112,sixteenth=(60/bpm)/4,bass=[55,55,65.41,55,73.42,65.41,49,55,55,82.41,73.42,65.41,49,55,43.65,49];
+  function ensure(){
+   if(!AC)return;
+   if(!ac){ac=new AC();bgmBus=ac.createGain();sfxBus=ac.createGain();bgmBus.gain.value=.25;sfxBus.gain.value=.72;bgmBus.connect(ac.destination);sfxBus.connect(ac.destination)}
+   ac.resume().catch(()=>{});
+   if(!bgmStarted){bgmStarted=true;next=ac.currentTime+.06;timer=setInterval(schedule,25)}
+  }
+  function tone(bus,freq,type,gain,dur,time,slide,filterHz){
+   if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,time);if(slide)o.frequency.exponentialRampToValueAtTime(slide,time+dur);g.gain.setValueAtTime(.0001,time);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),time+.006);g.gain.exponentialRampToValueAtTime(.0001,time+dur);
+   if(filterHz){const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=filterHz;o.connect(f).connect(g).connect(bus)}else o.connect(g).connect(bus);o.start(time);o.stop(time+dur+.03)
+  }
+  function noise(bus,gain,dur,time,hp){
+   if(!ac)return;const n=Math.max(1,Math.floor(ac.sampleRate*dur)),b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;const s=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();s.buffer=b;f.type='highpass';f.frequency.value=hp||700;g.gain.setValueAtTime(gain,time);g.gain.exponentialRampToValueAtTime(.0001,time+dur);s.connect(f).connect(g).connect(bus);s.start(time)
+  }
+  function musicStep(n,t){const s=n%16;if(s===0||s===8){tone(bgmBus,125,'sine',.18,.15,t,48);tone(bgmBus,s===0?55:49,'sawtooth',.06,.25,t,null,220)}if(s===4||s===12)noise(bgmBus,.045,.055,t,900);if(s%2===0)tone(bgmBus,bass[s],'triangle',.045,.16,t,null,180);if([2,6,10,14].includes(s))tone(bgmBus,[220,261.63,329.63,293.66][(s-2)/4],'square',.025,.07,t,null,1500)}
+  function schedule(){if(!ac||ac.state!=='running')return;while(next<ac.currentTime+.12){musicStep(step,next);next+=sixteenth;step++}}
+  window.__stabiAudioStart=ensure;
+  window.__stabiSfx=kind=>{
+   ensure();if(!sfxOn||!ac)return;const t=ac.currentTime+.01;
+   if(kind==='slash'){noise(sfxBus,.34,.055,t,1800);tone(sfxBus,980,'sawtooth',.26,.075,t,320,2600)}
+   else if(kind==='hurt'){tone(sfxBus,190,'square',.28,.16,t,92,900);noise(sfxBus,.16,.08,t,500)}
+   else if(kind==='kill'){tone(sfxBus,330,'square',.20,.08,t);tone(sfxBus,494,'square',.22,.09,t+.065);tone(sfxBus,740,'triangle',.24,.16,t+.13)}
+   else if(kind==='boss'){tone(sfxBus,92.5,'sawtooth',.28,.45,t,46,450);tone(sfxBus,138.6,'square',.18,.25,t+.15,69.3,700);noise(sfxBus,.20,.20,t+.05,300)}
+   else if(kind==='gameover'){tone(sfxBus,220,'square',.24,.20,t,196);tone(sfxBus,174.61,'square',.24,.25,t+.18,155.56);tone(sfxBus,130.81,'triangle',.30,.60,t+.40,82.41)}
+   else if(kind==='victory'){tone(sfxBus,261.63,'square',.20,.15,t);tone(sfxBus,329.63,'square',.22,.15,t+.13);tone(sfxBus,392,'square',.24,.15,t+.26);tone(sfxBus,523.25,'triangle',.30,.55,t+.39)}
+  };
+  addEventListener('pointerdown',ensure,{capture:true,passive:true});addEventListener('keydown',ensure,{capture:true});
+  setTimeout(()=>{const b=document.getElementById('stabiBgmBtn'),s=document.getElementById('stabiSfxBtn');if(b)b.onclick=e=>{e.preventDefault();e.stopPropagation();ensure();bgmOn=!bgmOn;bgmBus.gain.setTargetAtTime(bgmOn?.25:0,ac.currentTime,.02);b.classList.toggle('off',!bgmOn);b.textContent=bgmOn?'🎵':'🔇'};if(s)s.onclick=e=>{e.preventDefault();e.stopPropagation();ensure();sfxOn=!sfxOn;sfxBus.gain.setTargetAtTime(sfxOn?.72:0,ac.currentTime,.02);s.classList.toggle('off',!sfxOn);s.textContent=sfxOn?'🔊':'🔕'}},0);
+  document.addEventListener('visibilitychange',()=>{if(!ac)return;if(document.hidden)ac.suspend();else if(bgmStarted)ac.resume().catch(()=>{})});
+ })();
+ <\/script>\`;
+ const slashMark="p.cd=.55;p.atkT=.42;slashes.push(";if(!h.includes(slashMark))throw new Error('Slash hook marker');h=h.replace(slashMark,"p.cd=.55;p.atkT=.42;window.__stabiSfx&&window.__stabiSfx('slash');slashes.push(");
+ const killMark="m.hp=0;m.dead=isBoss?.9:.58;p.kills++;";if(!h.includes(killMark))throw new Error('Kill hook marker');h=h.replace(killMark,"m.hp=0;m.dead=isBoss?.9:.58;p.kills++;window.__stabiSfx&&window.__stabiSfx('kill');");
+ const hurtMark="p.inv=.65;p.hurtT=.32";if(!h.includes(hurtMark))throw new Error('Hurt hook marker');h=h.replace(hurtMark,"p.inv=.65;p.hurtT=.32;window.__stabiSfx&&window.__stabiSfx('hurt')");
+ const bossMark="function spawnBossWave(stage){if(bosses.length)return;";if(!h.includes(bossMark))throw new Error('Boss hook marker');h=h.replace(bossMark,"function spawnBossWave(stage){if(bosses.length)return;window.__stabiSfx&&window.__stabiSfx('boss');");
+ const endMark="function end(won){if(!run)return;run=false;";if(!h.includes(endMark))throw new Error('End hook marker');h=h.replace(endMark,"function end(won){if(!run)return;run=false;window.__stabiSfx&&window.__stabiSfx(won?'victory':'gameover');");
+ h=h.replace('</body>',audioHtml+'</body>');
+ ${writeMarker}`;
+ src=src.replace(writeMarker,patch);
+ document.open();document.write(src);document.close();
+}catch(e){document.body.innerHTML='<pre style="color:#fff;padding:18px;font-family:monospace;white-space:pre-wrap">FINAL AUDIO RUNTIME ERROR: '+e.message+'</pre>'}})();
+</script></body></html>
