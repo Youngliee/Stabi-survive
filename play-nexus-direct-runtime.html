@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus Direct Runtime</title></head><body style="margin:0;background:#031214"><script>
+(async()=>{try{
+ const parts=[];let total=0;
+ for(let i=0;i<10;i++){
+   const n=String(i).padStart(2,'0');
+   const r=await fetch('assets/maps/stabilizer-nexus-map-'+n+'.b64?v=nexus-direct3',{cache:'no-store'});
+   if(!r.ok)throw new Error('Map part '+n+' '+r.status);
+   const t=(await r.text()).replace(/\s+/g,'');
+   const bin=atob(t),u=new Uint8Array(bin.length);
+   for(let j=0;j<bin.length;j++)u[j]=bin.charCodeAt(j);
+   parts.push(u);total+=u.length;
+ }
+ const all=new Uint8Array(total);let off=0;
+ for(const u of parts){all.set(u,off);off+=u.length}
+ const mapUrl=URL.createObjectURL(new Blob([all],{type:'image/webp'}));
+ await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('Final map image invalid'));im.src=mapUrl});
+ const r=await fetch('play-logo-bg-runtime.html?v=nexus-direct3-base',{cache:'no-store'});if(!r.ok)throw new Error('Runtime '+r.status);let src=await r.text();
+ if(!src.includes('assets/logo.webp?v=20260905-logobg1'))throw new Error('Logo map marker');
+ src=src.replace('assets/logo.webp?v=20260905-logobg1',mapUrl);
+ src=src.replace("document.body.style.backgroundSize='contain';","document.body.style.backgroundSize='cover';");
+ src=src.replace("document.body.style.backgroundPosition='center center';","document.body.style.backgroundPosition='center center';");
+ src=src.replace("document.body.style.backgroundAttachment='fixed';","document.body.style.backgroundAttachment='scroll';");
+ document.open();document.write(src);document.close();
+}catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus direct test error: '+e.message+'</pre>'}})();
+</script></body></html>
