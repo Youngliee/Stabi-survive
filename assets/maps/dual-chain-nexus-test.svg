@@ -1,67 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600">
 <defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#061719"/><stop offset="1" stop-color="#020b0d"/></linearGradient>
-  <radialGradient id="eth" cx="0" cy=".25" r=".9"><stop stop-color="#5b37a8" stop-opacity=".62"/><stop offset="1" stop-color="#24183c" stop-opacity=".08"/></radialGradient>
-  <radialGradient id="arb" cx="1" cy=".25" r=".9"><stop stop-color="#178dd2" stop-opacity=".65"/><stop offset="1" stop-color="#08243b" stop-opacity=".08"/></radialGradient>
-  <linearGradient id="road" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#173436"/><stop offset="1" stop-color="#0b2225"/></linearGradient>
-  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#226b6b"/><stop offset="1" stop-color="#123b40"/></linearGradient>
-  <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#68e2d3" stroke-opacity=".045"/></pattern>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#06181a"/><stop offset="1" stop-color="#020b0d"/></linearGradient>
+  <radialGradient id="eth" cx="0" cy="0" r="1"><stop stop-color="#6544bd" stop-opacity=".75"/><stop offset="1" stop-color="#24183d" stop-opacity=".06"/></radialGradient>
+  <radialGradient id="arb" cx="1" cy="0" r="1"><stop stop-color="#159de1" stop-opacity=".78"/><stop offset="1" stop-color="#08243c" stop-opacity=".06"/></radialGradient>
+  <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18373a"/><stop offset="1" stop-color="#0a2023"/></linearGradient>
+  <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#247777"/><stop offset="1" stop-color="#123c42"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse"><path d="M46 0H0V46" fill="none" stroke="#79eadc" stroke-opacity=".035"/></pattern>
 </defs>
-<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#grid)"/>
-<rect width="800" height="900" fill="url(#eth)"/><rect x="800" width="800" height="900" fill="url(#arb)"/>
-<!-- outer terrain -->
-<path d="M0 0H1600V170L1510 185 1450 235 1375 220 1290 260 1180 220 1080 245 980 210 900 250 800 220 700 250 610 210 500 240 410 215 300 255 210 225 120 250 0 220Z" fill="#0b2626"/>
-<path d="M0 900V710L110 670 205 700 300 650 390 690 480 655 565 700 660 655 760 690 850 655 955 700 1050 655 1145 690 1245 650 1340 705 1430 670 1600 720V900Z" fill="#0a2022"/>
-<!-- side districts -->
-<g opacity=".96">
- <rect x="70" y="120" width="360" height="215" rx="30" fill="#18122c" stroke="#8d6cff" stroke-opacity=".45" stroke-width="3"/>
- <path d="M120 285L235 130 350 285Z" fill="#5b39a9" opacity=".22"/><path d="M235 155l70 122-70 44-70-44z" fill="#bca8ff" opacity=".9" filter="url(#glow)"/>
- <text x="250" y="310" text-anchor="middle" fill="#d8ceff" font-family="Arial" font-size="30" font-weight="800">ETHEREUM</text>
- <text x="250" y="336" text-anchor="middle" fill="#9b8bc9" font-family="Arial" font-size="14">SECURITY • LIQUIDITY</text>
- <rect x="1170" y="120" width="360" height="215" rx="30" fill="#08233a" stroke="#38b8ff" stroke-opacity=".55" stroke-width="3"/>
- <path d="M1230 285l75-125h150l75 125-75 70h-150z" fill="#0f80c8" opacity=".3"/><path d="M1285 265l72-110 45 0-75 110zm92 0l72-110 43 0-75 110z" fill="#b6e9ff" opacity=".9" filter="url(#glow)"/>
- <text x="1350" y="310" text-anchor="middle" fill="#c7efff" font-family="Arial" font-size="30" font-weight="800">ARBITRUM ONE</text>
- <text x="1350" y="336" text-anchor="middle" fill="#7bb8d5" font-family="Arial" font-size="14">SPEED • SCALE</text>
-</g>
-<!-- bridges -->
-<g stroke="#61dfd2" stroke-opacity=".38" stroke-width="3">
- <path d="M420 325C505 360 545 392 610 430" fill="none"/><path d="M1180 325C1095 360 1055 392 990 430" fill="none"/>
-</g>
-<g fill="#102c30" stroke="#57d8ce" stroke-opacity=".35" stroke-width="2">
- <path d="M355 345h230l80 85-56 52-92-85H355z"/><path d="M1245 345h-230l-80 85 56 52 92-85h162z"/>
-</g>
-<text x="475" y="390" text-anchor="middle" fill="#8ddfd8" font-family="Arial" font-size="15" font-weight="700">ZERO SLIPPAGE</text>
-<text x="1125" y="390" text-anchor="middle" fill="#8ddfd8" font-family="Arial" font-size="15" font-weight="700">TWO CHAINS • ONE HOME</text>
-<!-- central Stabilizer house -->
-<g filter="url(#glow)"><ellipse cx="800" cy="395" rx="235" ry="110" fill="#32dfd2" opacity=".06"/></g>
+<rect width="900" height="1600" fill="url(#bg)"/><rect width="900" height="1600" fill="url(#grid)"/>
+<rect width="450" height="1600" fill="url(#eth)"/><rect x="450" width="450" height="1600" fill="url(#arb)"/>
+<!-- outer garden -->
+<path d="M0 0H900V280L830 300 770 275 705 320 640 290 575 315 510 290 450 318 390 290 325 315 260 288 195 320 125 285 60 305 0 280Z" fill="#0b2928"/>
+<path d="M0 1600V1410L80 1380 150 1410 220 1375 290 1410 360 1380 450 1415 540 1380 610 1410 680 1375 750 1410 820 1380 900 1410V1600Z" fill="#092122"/>
+<!-- stabilizer house -->
 <g>
- <rect x="620" y="245" width="360" height="190" rx="18" fill="#0a2427" stroke="#61ddd2" stroke-opacity=".55" stroke-width="3"/>
- <path d="M595 270L800 130l205 140-50 0-155-100-155 100z" fill="url(#roof)" stroke="#73efe2" stroke-opacity=".38" stroke-width="3"/>
- <path d="M710 275h180v160H710z" fill="#102f32"/><rect x="755" y="330" width="90" height="105" rx="8" fill="#082020" stroke="#f4d17a" stroke-opacity=".7"/>
- <rect x="655" y="300" width="55" height="62" rx="8" fill="#123f42"/><rect x="890" y="300" width="55" height="62" rx="8" fill="#123f42"/>
- <circle cx="800" cy="230" r="49" fill="#0d3335" stroke="#78f5e7" stroke-width="3"/><path d="M830 202c-14-10-43-11-56 4-14 17 4 29 30 33 24 4 38 14 29 30-11 18-48 17-67 4" fill="none" stroke="#7ffff1" stroke-width="11" stroke-linecap="round"/>
- <text x="800" y="475" text-anchor="middle" fill="#bafff7" font-family="Arial" font-size="28" font-weight="900">STABILIZER HOUSE</text>
+ <ellipse cx="450" cy="250" rx="260" ry="150" fill="#36ddd2" opacity=".055" filter="url(#glow)"/>
+ <rect x="270" y="155" width="360" height="230" rx="24" fill="#0a2427" stroke="#66e4d7" stroke-opacity=".55" stroke-width="3"/>
+ <path d="M235 190L450 55l215 135h-60L450 98 295 190Z" fill="url(#roof)" stroke="#77f1e5" stroke-opacity=".35" stroke-width="3"/>
+ <rect x="390" y="250" width="120" height="135" rx="10" fill="#082021" stroke="#f2cf72" stroke-opacity=".72"/>
+ <rect x="305" y="225" width="58" height="68" rx="8" fill="#124144"/><rect x="537" y="225" width="58" height="68" rx="8" fill="#124144"/>
+ <circle cx="450" cy="166" r="52" fill="#0d3436" stroke="#79f4e7" stroke-width="3"/>
+ <path d="M481 139c-15-11-45-12-59 4-14 17 5 30 32 34 25 4 40 15 30 31-11 19-50 18-70 4" fill="none" stroke="#81fff2" stroke-width="11" stroke-linecap="round"/>
+ <text x="450" y="425" text-anchor="middle" fill="#bafff7" font-family="Arial" font-size="30" font-weight="900">STABILIZER HOUSE</text>
+ <text x="450" y="451" text-anchor="middle" fill="#6ea7a2" font-family="Arial" font-size="14">THE HOME OF STABLECOINS</text>
 </g>
-<!-- central arena -->
-<ellipse cx="800" cy="610" rx="315" ry="180" fill="#07191b" stroke="#4acfc5" stroke-opacity=".28" stroke-width="4"/>
-<ellipse cx="800" cy="610" rx="255" ry="135" fill="#0d282a" stroke="#315f5d" stroke-width="3"/>
-<ellipse cx="800" cy="610" rx="185" ry="92" fill="#0a1d20" stroke="#5ee4d8" stroke-opacity=".23" stroke-width="2"/>
-<path d="M615 610h370M800 518v184" stroke="#54d6cb" stroke-opacity=".11" stroke-width="2"/>
-<!-- stablecoin pedestals -->
+<!-- chain portals -->
+<g font-family="Arial" text-anchor="middle">
+ <rect x="38" y="350" width="275" height="250" rx="28" fill="#18132d" stroke="#936fff" stroke-opacity=".5" stroke-width="3"/>
+ <path d="M176 395l72 120-72 44-72-44z" fill="#c7b7ff" opacity=".92" filter="url(#glow)"/>
+ <path d="M176 415v120M126 510l50-95 50 95-50 30z" fill="none" stroke="#6d50cb" stroke-width="3"/>
+ <text x="176" y="566" fill="#dfd6ff" font-size="27" font-weight="900">ETHEREUM</text>
+ <text x="176" y="589" fill="#a89ad4" font-size="13">SECURITY • LIQUIDITY</text>
+ <rect x="587" y="350" width="275" height="250" rx="28" fill="#08243b" stroke="#42bdff" stroke-opacity=".56" stroke-width="3"/>
+ <path d="M651 515l54-93h83l55 93-55 45h-83z" fill="#0f82ca" opacity=".34"/>
+ <path d="M690 514l58-92h27l-60 92zm61 0l58-92h26l-60 92z" fill="#c0ecff" filter="url(#glow)"/>
+ <text x="724" y="566" fill="#d2f2ff" font-size="27" font-weight="900">ARBITRUM ONE</text>
+ <text x="724" y="589" fill="#80beda" font-size="13">SPEED • SCALE</text>
+</g>
+<!-- connector paths -->
+<path d="M313 500C355 545 390 575 422 620" fill="none" stroke="#57d8ce" stroke-opacity=".36" stroke-width="8"/>
+<path d="M587 500C545 545 510 575 478 620" fill="none" stroke="#57d8ce" stroke-opacity=".36" stroke-width="8"/>
+<text x="450" y="540" text-anchor="middle" fill="#99e5de" font-family="Arial" font-size="15" font-weight="700">TWO CHAINS • ONE HOME</text>
+<!-- large combat arena -->
+<g>
+ <rect x="92" y="625" width="716" height="555" rx="100" fill="#071a1c" stroke="#47cfc5" stroke-opacity=".24" stroke-width="4"/>
+ <rect x="130" y="665" width="640" height="475" rx="82" fill="url(#stone)" stroke="#315c5a" stroke-width="3"/>
+ <ellipse cx="450" cy="900" rx="230" ry="205" fill="#0c292b" stroke="#5ee5d8" stroke-opacity=".24" stroke-width="3"/>
+ <ellipse cx="450" cy="900" rx="150" ry="130" fill="#091f21" stroke="#5ee5d8" stroke-opacity=".16" stroke-width="2"/>
+ <path d="M220 900H680M450 700V1100" stroke="#63d9cf" stroke-opacity=".08" stroke-width="2"/>
+ <circle cx="450" cy="900" r="68" fill="#0d3334" stroke="#68ded4" stroke-opacity=".26" stroke-width="2"/>
+ <path d="M480 872c-14-10-41-10-54 3-13 15 4 26 28 30 23 4 36 13 27 27-10 16-44 15-62 3" fill="none" stroke="#89efe5" stroke-opacity=".36" stroke-width="9" stroke-linecap="round"/>
+</g>
+<!-- props kept near edges -->
+<g fill="#174c42"><circle cx="90" cy="690" r="42"/><circle cx="72" cy="810" r="33"/><circle cx="810" cy="690" r="42"/><circle cx="828" cy="810" r="33"/><circle cx="110" cy="1090" r="38"/><circle cx="790" cy="1090" r="38"/></g>
+<g fill="#efd079"><circle cx="155" cy="710" r="8"/><circle cx="745" cy="710" r="8"/><circle cx="150" cy="1060" r="8"/><circle cx="750" cy="1060" r="8"/></g>
+<!-- stablecoin district -->
+<text x="450" y="1245" text-anchor="middle" fill="#79cfc7" font-family="Arial" font-size="16" font-weight="800">STABLECOIN DISTRICT</text>
 <g font-family="Arial" text-anchor="middle" font-weight="800">
- <g transform="translate(525 700)"><ellipse rx="72" ry="26" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".5"/><circle cy="-25" r="42" fill="#139e8c" stroke="#8affef" stroke-width="3"/><text y="-17" fill="white" font-size="24">₮</text><text y="18" fill="#b9fff7" font-size="14">USDT</text></g>
- <g transform="translate(705 748)"><ellipse rx="72" ry="26" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".5"/><circle cy="-25" r="42" fill="#2775ca" stroke="#9dd7ff" stroke-width="3"/><text y="-17" fill="white" font-size="24">$</text><text y="18" fill="#c8e9ff" font-size="14">USDC</text></g>
- <g transform="translate(895 748)"><ellipse rx="72" ry="26" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".5"/><circle cy="-25" r="42" fill="#b58d2f" stroke="#ffe099" stroke-width="3"/><text y="-17" fill="white" font-size="24">S</text><text y="18" fill="#fff1bb" font-size="14">USDS</text></g>
- <g transform="translate(1075 700)"><ellipse rx="72" ry="26" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".5"/><circle cy="-25" r="42" fill="#2b68c6" stroke="#a8ceff" stroke-width="3"/><text y="-17" fill="white" font-size="22">PY</text><text y="18" fill="#c8dcff" font-size="14">PYUSD</text></g>
+ <g transform="translate(145 1330)"><ellipse rx="82" ry="30" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".45"/><circle cy="-34" r="48" fill="#139e8c" stroke="#8affef" stroke-width="3"/><text y="-24" fill="white" font-size="29">₮</text><text y="35" fill="#b9fff7" font-size="15">USDT</text></g>
+ <g transform="translate(350 1330)"><ellipse rx="82" ry="30" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".45"/><circle cy="-34" r="48" fill="#2775ca" stroke="#9dd7ff" stroke-width="3"/><text y="-24" fill="white" font-size="29">$</text><text y="35" fill="#c8e9ff" font-size="15">USDC</text></g>
+ <g transform="translate(550 1330)"><ellipse rx="82" ry="30" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".45"/><circle cy="-34" r="48" fill="#b58d2f" stroke="#ffe099" stroke-width="3"/><text y="-24" fill="white" font-size="28">S</text><text y="35" fill="#fff1bb" font-size="15">USDS</text></g>
+ <g transform="translate(755 1330)"><ellipse rx="82" ry="30" fill="#12383a" stroke="#4fe0d5" stroke-opacity=".45"/><circle cy="-34" r="48" fill="#2b68c6" stroke="#a8ceff" stroke-width="3"/><text y="-25" fill="white" font-size="24">PY</text><text y="35" fill="#c8dcff" font-size="15">PYUSD</text></g>
 </g>
-<!-- vegetation / props -->
-<g fill="#174b42" opacity=".9">
- <circle cx="125" cy="470" r="58"/><circle cx="210" cy="520" r="38"/><circle cx="1450" cy="475" r="62"/><circle cx="1370" cy="535" r="42"/>
- <circle cx="320" cy="760" r="45"/><circle cx="1270" cy="770" r="48"/><circle cx="245" cy="650" r="32"/><circle cx="1350" cy="650" r="34"/>
+<!-- bottom signs -->
+<g font-family="Arial" font-size="15" font-weight="800">
+ <path d="M55 1460h290v60H55z" fill="#102a2d" stroke="#5c807e"/><text x="200" y="1497" text-anchor="middle" fill="#a9d8d3">ETHEREUM ←</text>
+ <path d="M555 1460h290v60H555z" fill="#102a2d" stroke="#5c807e"/><text x="700" y="1497" text-anchor="middle" fill="#a9d8d3">→ ARBITRUM</text>
 </g>
-<g fill="#efcf78"><circle cx="620" cy="505" r="7"/><circle cx="980" cy="505" r="7"/><circle cx="570" cy="815" r="7"/><circle cx="1030" cy="815" r="7"/></g>
-<!-- directional signs -->
-<g font-family="Arial" font-size="16" font-weight="700"><path d="M125 805h230v48H125z" fill="#102a2d" stroke="#5c807e"/><text x="240" y="836" text-anchor="middle" fill="#a5d3cf">ETHEREUM ←</text><path d="M1245 805h230v48h-230z" fill="#102a2d" stroke="#5c807e"/><text x="1360" y="836" text-anchor="middle" fill="#a5d3cf">→ ARBITRUM</text></g>
-<rect width="1600" height="900" fill="#001014" opacity=".14"/>
+<text x="450" y="1560" text-anchor="middle" fill="#5e8c87" font-family="Arial" font-size="15" letter-spacing="5">STABI SURVIVE</text>
+<rect width="900" height="1600" fill="#001014" opacity=".1"/>
 </svg>
