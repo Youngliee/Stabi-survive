@@ -1,22 +1,14 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus Direct Runtime</title></head><body style="margin:0;background:#031214"><script>
 (async()=>{try{
- const mapUrl='assets/maps/nexus-map-direct.webp?v=nexus-direct5';
+ const mapUrl='assets/maps/nexus-map-direct.webp?v=nexus-canvas1';
  await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('Direct map asset failed'));im.src=mapUrl});
- const r=await fetch('play-fixed-base.html?v=nexus-direct5-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const r=await fetch('play-fixed-base.html?v=nexus-canvas1-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const clearMarker="if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,\"function bg(){ctx.clearRect(0,0,W(),H())}\");";
+ if(!src.includes(clearMarker))throw new Error('Canvas BG marker');
+ const drawCode="const nexusBg=new Image();nexusBg.src='assets/maps/nexus-map-direct.webp?v=nexus-canvas1';function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexusBg.complete&&nexusBg.naturalWidth){const iw=nexusBg.naturalWidth,ih=nexusBg.naturalHeight,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=true;ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
+ src=src.replace(clearMarker,"if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,"+JSON.stringify(drawCode)+");");
  const re=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
- if(!re.test(src))throw new Error('Map loader marker');
- const repl=`async function loadStaticMap(){
- document.documentElement.style.background='#031214';
- document.body.style.backgroundColor='#031214';
- document.body.style.backgroundImage='url("${mapUrl}")';
- document.body.style.backgroundSize='cover';
- document.body.style.backgroundPosition='center center';
- document.body.style.backgroundRepeat='no-repeat';
- document.body.style.backgroundAttachment='scroll';
- window.__STABI_MAP_READY__=true;
-}
-loadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});`;
- src=src.replace(re,repl);
+ if(re.test(src))src=src.replace(re,"async function loadStaticMap(){window.__STABI_MAP_READY__=true}\nloadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});");
  document.open();document.write(src);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus direct test error: '+e.message+'</pre>'}})();
 </script></body></html>
