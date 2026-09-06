@@ -1,14 +1,22 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus 256px Portrait Test</title></head><body style="margin:0;background:#031214"><script>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus 941x1672 Test</title></head><body style="margin:0;background:#031214"><script>
 (async()=>{try{
- const mapUrl='assets/maps/nexus-portrait-256.webp?v=nexus-256-portrait1';
- await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('256px portrait map asset failed'));im.src=mapUrl});
- const r=await fetch('play-fixed-base.html?v=nexus-256-portrait1-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const parts=[];
+ for(let i=0;i<10;i++){
+   const p='assets/maps/nexus-q50-test-'+String(i).padStart(2,'0')+'.b64?v=nexus-q50-941-final1';
+   const rr=await fetch(p,{cache:'no-store'});if(!rr.ok)throw new Error('Map chunk '+i+' '+rr.status);parts.push((await rr.text()).replace(/\s+/g,''));
+ }
+ const b64=parts.join('');
+ let bin;try{bin=atob(b64)}catch(e){throw new Error('Map decode failed')}
+ const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ const blobUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
+ await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('941x1672 map failed'));im.src=blobUrl});
+ const r=await fetch('play-fixed-base.html?v=nexus-q50-941-final1-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
  const clearMarker="if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,\"function bg(){ctx.clearRect(0,0,W(),H())}\");";
  if(!src.includes(clearMarker))throw new Error('Canvas BG marker');
- const drawCode="const nexusBg=new Image();nexusBg.src='assets/maps/nexus-portrait-256.webp?v=nexus-256-portrait1';function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexusBg.complete&&nexusBg.naturalWidth){const iw=nexusBg.naturalWidth,ih=nexusBg.naturalHeight,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=true;ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
+ const drawCode="const nexusBg=new Image();nexusBg.src="+JSON.stringify(blobUrl)+";function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexusBg.complete&&nexusBg.naturalWidth){const iw=nexusBg.naturalWidth,ih=nexusBg.naturalHeight,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=false;ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
  src=src.replace(clearMarker,"if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,"+JSON.stringify(drawCode)+");");
  const re=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
  if(re.test(src))src=src.replace(re,"async function loadStaticMap(){window.__STABI_MAP_READY__=true}\nloadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});");
  document.open();document.write(src);document.close();
-}catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus 256px portrait test error: '+e.message+'</pre>'}})();
+}catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus 941x1672 test error: '+e.message+'</pre>'}})();
 </script></body></html>
