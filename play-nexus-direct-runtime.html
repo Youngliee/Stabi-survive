@@ -1,14 +1,14 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus 941×1672 Direct Test</title></head><body style="margin:0;background:#031214"><script>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus 512px Portrait Test</title></head><body style="margin:0;background:#031214"><script>
 (async()=>{try{
- const mapUrl='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-941-direct5';
- await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('Direct map asset failed'));im.src=mapUrl});
- const r=await fetch('play-fixed-base.html?v=nexus-941-direct5-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
+ const mapUrl='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-512-render1';
+ await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('Nexus source map failed'));im.src=mapUrl});
+ const r=await fetch('play-fixed-base.html?v=nexus-512-render1-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
  const clearMarker="if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,\"function bg(){ctx.clearRect(0,0,W(),H())}\");";
  if(!src.includes(clearMarker))throw new Error('Canvas BG marker');
- const drawCode="const nexusBg=new Image();nexusBg.src='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-941-direct5';function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexusBg.complete&&nexusBg.naturalWidth){const iw=nexusBg.naturalWidth,ih=nexusBg.naturalHeight,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=true;ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
+ const drawCode="const nexusSource=new Image();const nexusBg=document.createElement('canvas');nexusBg.width=512;nexusBg.height=910;let nexus512Ready=false;nexusSource.onload=()=>{const nc=nexusBg.getContext('2d');nc.imageSmoothingEnabled=true;nc.imageSmoothingQuality='high';nc.clearRect(0,0,512,910);nc.drawImage(nexusSource,0,0,512,910);nexus512Ready=true;window.__NEXUS_512_READY__=true};nexusSource.src='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-512-render1';function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexus512Ready){const iw=512,ih=910,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
  src=src.replace(clearMarker,"if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,"+JSON.stringify(drawCode)+");");
  const re=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
  if(re.test(src))src=src.replace(re,"async function loadStaticMap(){window.__STABI_MAP_READY__=true}\nloadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});");
  document.open();document.write(src);document.close();
-}catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus 941x1672 direct test error: '+e.message+'</pre>'}})();
+}catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus 512px portrait test error: '+e.message+'</pre>'}})();
 </script></body></html>
