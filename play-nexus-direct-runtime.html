@@ -1,14 +1,16 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Stabi Survive • Nexus 512px Portrait Test</title></head><body style="margin:0;background:#031214"><script>
 (async()=>{try{
- const mapUrl='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-512-render1';
- await new Promise((ok,fail)=>{const im=new Image();im.onload=ok;im.onerror=()=>fail(new Error('Nexus source map failed'));im.src=mapUrl});
- const r=await fetch('play-fixed-base.html?v=nexus-512-render1-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
- const clearMarker="if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,\"function bg(){ctx.clearRect(0,0,W(),H())}\");";
- if(!src.includes(clearMarker))throw new Error('Canvas BG marker');
- const drawCode="const nexusSource=new Image();const nexusBg=document.createElement('canvas');nexusBg.width=512;nexusBg.height=910;let nexus512Ready=false;nexusSource.onload=()=>{const nc=nexusBg.getContext('2d');nc.imageSmoothingEnabled=true;nc.imageSmoothingQuality='high';nc.clearRect(0,0,512,910);nc.drawImage(nexusSource,0,0,512,910);nexus512Ready=true;window.__NEXUS_512_READY__=true};nexusSource.src='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-512-render1';function bg(){const cw=W(),ch=H();ctx.clearRect(0,0,cw,ch);if(nexus512Ready){const iw=512,ih=910,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(nexusBg,(cw-dw)/2,(ch-dh)/2,dw,dh)}else{ctx.fillStyle='#031214';ctx.fillRect(0,0,cw,ch)}}";
- src=src.replace(clearMarker,"if(!h.includes(oldBg))throw new Error('BG marker');h=h.replace(oldBg,"+JSON.stringify(drawCode)+");");
+ const sourceUrl='assets/maps/nexus-portrait-941x1672-q80.webp?v=nexus-512-bg2';
+ const source=await new Promise((ok,fail)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>fail(new Error('Nexus source map failed'));im.src=sourceUrl});
+ const map512=document.createElement('canvas');map512.width=512;map512.height=910;const mc=map512.getContext('2d');mc.imageSmoothingEnabled=true;mc.imageSmoothingQuality='high';mc.drawImage(source,0,0,512,910);
+ const blob=await new Promise((ok,fail)=>map512.toBlob(b=>b?ok(b):fail(new Error('512 map encode failed')),'image/webp',0.92));
+ const mapObjectUrl=URL.createObjectURL(blob);
+ const r=await fetch('play-fixed-base.html?v=nexus-512-bg2-base',{cache:'no-store'});if(!r.ok)throw new Error('Base '+r.status);let src=await r.text();
  const re=/async function loadStaticMap\(\)\{[\s\S]*?\n\}\nloadStaticMap\(\)\.catch\(\(\)=>\{window\.__STABI_MAP_READY__=false\}\);/;
- if(re.test(src))src=src.replace(re,"async function loadStaticMap(){window.__STABI_MAP_READY__=true}\nloadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});");
+ if(!re.test(src))throw new Error('Static map marker');
+ const bgValue='url("'+mapObjectUrl+'")';
+ const loader="async function loadStaticMap(){document.documentElement.style.background='transparent';document.body.style.backgroundColor='#031214';document.body.style.backgroundImage="+JSON.stringify(bgValue)+";document.body.style.backgroundPosition='center';document.body.style.backgroundSize='cover';document.body.style.backgroundRepeat='no-repeat';document.body.style.backgroundAttachment='fixed';window.__STABI_MAP_READY__=true}\nloadStaticMap().catch(()=>{window.__STABI_MAP_READY__=false});";
+ src=src.replace(re,loader);
  document.open();document.write(src);document.close();
 }catch(e){document.body.innerHTML='<pre style="color:#9ff;padding:18px;font-family:monospace;white-space:pre-wrap">Nexus 512px portrait test error: '+e.message+'</pre>'}})();
 </script></body></html>
